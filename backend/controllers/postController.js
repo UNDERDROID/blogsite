@@ -1,4 +1,5 @@
 const postModel = require('../models/postModel');
+const userModel = require('../models/userModel');
 
 const getAllPosts = async (req, res) => {
   try {
@@ -15,7 +16,8 @@ const getPostsPrioritized = async (req, res) => {
     const posts = await postModel.getPostsPrioritized(userId);
     res.status(200).json(posts);
   }catch(error){
-    res.status(500).json({error: 'Failed to fetch posts'});
+    console.error('Error fetching posts:', error);
+    res.status(500).json({error: 'Failed to fetch posts', details: error.message,});
   }
 }
 

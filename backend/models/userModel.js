@@ -7,6 +7,12 @@ const createUser = async (username, password, role = 'user') => {
     )
 }
 
+//Delete a user
+const deleteUser = async (userId) => {
+    const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [userId]);
+    return result.rows[0];
+};
+
 //Find user by username
 const findUserByUsername = async (username) => {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
@@ -27,6 +33,7 @@ const getUserById = async (id)=>{
 
 module.exports = {
     createUser,
+    deleteUser,
     findUserByUsername,
     getUsers,
     getUserById

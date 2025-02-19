@@ -1,11 +1,12 @@
 const express = require('express');
 const postController = require('../controllers/postController');
-const { authorizeRole } = require('../middlewares/roleMiddleware')
+const { authorizeRole } = require('../middlewares/roleMiddleware');
+const authenticateToken = require('../middlewares/authenticateToken');
 const router = express.Router();
 
 // Normal users can view all posts
 router.get('/', postController.getAllPosts);
-router.get('/fyp', postController.getPostsPrioritized);
+router.get('/fyp', authenticateToken, postController.getPostsPrioritized);
 
 // Admin can create and delete posts
 router.post('/', authorizeRole('admin'), postController.createPost);

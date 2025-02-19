@@ -9,26 +9,48 @@ const getAllPosts = async ()=>{
 //Get post by priority(posts of followed admins first)
 const getPostsPrioritized = async (userId) => {
     const query = `
-    (
-      SELECT p.*
-      FROM posts p
-      JOIN followers f ON p.created_by = f.followed_admin_id
-      WHERE f.follower_id = $1
-    )
-    UNION
-    (
-      SELECT p.*
-      FROM posts p
-      WHERE p.created_by NOT IN (
-        SELECT followed_admin_id FROM followers WHERE follower_id = $1
-      )
-    )
-    ORDER BY created_at DESC;
-  `;
+     (
+  -- Posts from followed admins (priority 1)
+  SELECT p.id, p.title, p.content, p.created_by, p.created_at, p.category, 1 AS priority
+  FROM posts p
+  JOIN followers f ON p.created_by = f.followed_admin_id
+  WHERE f.follower_id = $1
+)
+UNION
+(
+  -- Posts from followed categories (priority 2), excluding posts already fetched for followed admins
+  SELECT p.id, p.title, p.content, p.created_by, p.created_at, p.category, 2 AS priority
+  FROM posts p
+  JOIN followed_categories fc ON p.category @> fc.category
+  WHERE fc.user_id = $1
+  AND p.id NOT IN (
+    SELECT p.id
+    FROM posts p
+    JOIN followers f ON p.created_by = f.followed_admin_id
+    WHERE f.follower_id = $1
+  )
+)
+UNION
+(
+  -- All other posts (priority 3), excluding both followed admins and followed categories
+  SELECT p.id, p.title, p.content, p.created_by, p.created_at, p.category, 3 AS priority
+  FROM posts p
+  WHERE p.created_by NOT IN (
+    SELECT followed_admin_id FROM followers WHERE follower_id = $1
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM followed_categories fc
+    WHERE p.category @> fc.category AND fc.user_id = $1
+  )
+)
+ORDER BY priority ASC, created_at DESC;
+`
+
   
-  const result = await pool.query(query, [userId]);
-  return result.rows;
-}
+    const result = await pool.query(query, [userId]);
+    return result.rows;
+  };  
 
 //Get a single post by ID
 const getPostById = async (id) => {
