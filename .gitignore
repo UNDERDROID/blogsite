@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn.lock
+
+# Environment files
+.env
+
+# Build output
+dist/
+build/
+.angular/
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Test-related files
+coverage/
+
+# Temporary files
+*.swp
+.temp/
