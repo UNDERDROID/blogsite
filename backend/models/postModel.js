@@ -6,6 +6,30 @@ const getAllPosts = async ()=>{
     return result.rows;
 };
 
+//Get post by priority(posts of followed admins first)
+const getPostsPrioritized = async (userId) => {
+    const query = `
+    (
+      SELECT p.*
+      FROM posts p
+      JOIN followers f ON p.created_by = f.followed_admin_id
+      WHERE f.follower_id = $1
+    )
+    UNION
+    (
+      SELECT p.*
+      FROM posts p
+      WHERE p.created_by NOT IN (
+        SELECT followed_admin_id FROM followers WHERE follower_id = $1
+      )
+    )
+    ORDER BY created_at DESC;
+  `;
+  
+  const result = await pool.query(query, [userId]);
+  return result.rows;
+}
+
 //Get a single post by ID
 const getPostById = async (id) => {
 const result = await pool.query('SELECT * FROM posts WHERE id = $1', [id]);
@@ -37,6 +61,7 @@ const deletePost = async (id) => {
   
   module.exports = {
     getAllPosts,
+    getPostsPrioritized,
     getPostById,
     createPost,
     updatePost,

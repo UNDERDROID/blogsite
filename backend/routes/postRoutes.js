@@ -5,6 +5,7 @@ const router = express.Router();
 
 // Normal users can view all posts
 router.get('/', postController.getAllPosts);
+router.get('/fyp', postController.getPostsPrioritized);
 
 // Admin can create and delete posts
 router.post('/', authorizeRole('admin'), postController.createPost);

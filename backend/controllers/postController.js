@@ -9,6 +9,16 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+const getPostsPrioritized = async (req, res) => {
+  try{
+    const userId = req.user.id;
+    const posts = await postModel.getPostsPrioritized(userId);
+    res.status(200).json(posts);
+  }catch(error){
+    res.status(500).json({error: 'Failed to fetch posts'});
+  }
+}
+
 const getPostById = async (req, res) => {
   try {
     const post = await postModel.getPostById(req.params.id);
@@ -29,17 +39,17 @@ const createPost = async (req, res) => {
   try {
     //Validate categories is an array
     if(!Array.isArray(categories)){
-      return res.status(400).json({error: 'category must be an array'});
+      return res.status(400).json({error: 'categories must be an array'});
     }
 
     //check if all categories are valid
     const invalidCategories = categories.filter((category)=>!predefinedCategories.includes(category));
     if(invalidCategories.length>0){
       return res.status(400).json({
-        error:`Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${predefinedCategories.join(', ')}`,
-      })
+        error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${predefinedCategories.join(', ')}`,
+      });
     }
-    const createdBy = req.user.username;
+    const createdBy = req.user.id;
     const newPost = await postModel.createPost(title, content, categories, createdBy);
     res.status(201).json(newPost);
   } catch (error) {
@@ -69,6 +79,7 @@ const deletePost = async (req, res) => {
 
 module.exports = {
   getAllPosts,
+  getPostsPrioritized,
   getPostById,
   createPost,
   updatePost,
