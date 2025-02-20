@@ -1,9 +1,9 @@
 const pool = require('../db/db');
 
 //Create a new user
-const createUser = async (username, password, role = 'user') => {
-    await pool.query('INSERT INTO users(username, password, role) VALUES ($1, $2, $3)',
-        [username, password, role]
+const createUser = async (username, email, password, role = 'user') => {
+    await pool.query('INSERT INTO users(username, email, password, role) VALUES ($1, $2, $3, $4)',
+        [username, email, password, role]
     )
 }
 
@@ -16,6 +16,11 @@ const deleteUser = async (userId) => {
 //Find user by username
 const findUserByUsername = async (username) => {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    return result.rows[0];
+}
+
+const findUserByEmail = async(email) => {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     return result.rows[0];
 }
 
@@ -35,6 +40,7 @@ module.exports = {
     createUser,
     deleteUser,
     findUserByUsername,
+    findUserByEmail,
     getUsers,
     getUserById
 }

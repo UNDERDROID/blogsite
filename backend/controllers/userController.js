@@ -5,14 +5,48 @@ const pool = require('../db/db');
 
 // Register a new user
 const registerUser = async (req, res) => {
-    const { username, password, role } = req.body;
+    const { username, email, password, role } = req.body;
+
+     // Email and password validation
+     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/; 
+
+     if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+  }
+
+  if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+          error: 'Password must be at least 8 characters long, contain uppercase, lowercase, a number, and a special character'
+      });
+  }
+
+  //Check if username already exist
+  const existingUser = await userModel.findUserByUsername(username);
+  if (existingUser){
+    return res.status(400).json({error: 'Username already exists'});
+  }
+
+  //Check if email already exist
+  const existingEmail = await userModel.findUserByEmail(email);
+  if (existingEmail) {
+    return res.status(400).json({ error: 'Email already registered' });
+  }
+
+  const validRoles = ['admin', 'user', 'editor'];
+  if (role && !validRoles.includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+  }
+
+
+
     try {
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
-      await userModel.createUser(username, hashedPassword, role);
+      await userModel.createUser(username, email, hashedPassword, role);
       res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to register user' });
+      res.status(500).json({ error: 'Failed to register user', details: error.message });
     }
   };
 
