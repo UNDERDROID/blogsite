@@ -9,7 +9,7 @@ yarn.lock
 # Build output
 dist/
 build/
-.angular/
+
 
 # IDE/editor folders
 .vscode/
