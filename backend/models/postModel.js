@@ -1,76 +1,147 @@
 const pool = require('../db/db');
 
-//Get all posts
-const getAllPosts = async ()=>{
-    const result = await pool.query('SELECT * FROM posts ORDER BY created_at DESC');
-    return result.rows;
+
+// Create a new post and link it to categories
+const createPost = async (title, content, categoryIds, createdBy) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const postResult = await client.query(
+      'INSERT INTO posts (title, content, created_by, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
+      [title, content, createdBy]
+    );
+    const newPost = postResult.rows[0];
+    // Insert associations
+    const promises = categoryIds.map(id =>
+      client.query(
+        'INSERT INTO post_categories (post_id, category_id) VALUES ($1, $2)',
+        [newPost.id, id]
+      )
+    );
+    await Promise.all(promises);
+    await client.query('COMMIT');
+    return newPost;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-//Get post by priority(posts of followed admins first)
 const getPostsPrioritized = async (userId) => {
-    const query = `
-     SELECT 
-  p.id, 
-  p.title, 
-  p.content, 
-  p.created_by, 
-  p.created_at, 
-  p.category,
-  CASE 
-    WHEN f.follower_id IS NOT NULL AND fc.user_id IS NOT NULL THEN 1
-    WHEN f.follower_id IS NOT NULL OR fc.user_id IS NOT NULL THEN 2
-    ELSE 3
-  END AS priority
-FROM posts p
-LEFT JOIN followers f 
-  ON p.created_by = f.followed_admin_id 
-  AND f.follower_id = $1
-LEFT JOIN followed_categories fc 
-  ON p.category @> fc.category 
-  AND fc.user_id = $1
-ORDER BY priority ASC, created_at DESC;
+  const query = `
+    WITH user_followed AS (
+      SELECT category
+      FROM followed_categories
+      WHERE user_id = $1
+    ),
+    post_data AS (
+      SELECT 
+        p.id,
+        p.title,
+        p.content,
+        p.created_by,
+        p.created_at,
+        u.username AS creator_name,
+        ARRAY_AGG(DISTINCT c.name) AS categories
+      FROM posts p
+      LEFT JOIN post_categories pc ON p.id = pc.post_id
+      LEFT JOIN categories c ON pc.category_id = c.id
+      LEFT JOIN users u ON p.created_by = u.id
+      GROUP BY p.id, u.username, p.created_at
+    )
+    SELECT 
+      pd.*,
+      (
+        SELECT COUNT(*) 
+        FROM user_followed uf 
+        WHERE uf.category = ANY(pd.categories)
+      ) AS priority
+    FROM post_data pd
+    ORDER BY priority DESC, pd.created_at DESC;
+  `;
 
-`
+  const result = await pool.query(query, [userId]);
+  return result.rows;
+};
 
-  
-    const result = await pool.query(query, [userId]);
-    return result.rows;
-  };  
 
-//Get a single post by ID
+
+// Get a post by id along with its categories
 const getPostById = async (id) => {
-const result = await pool.query('SELECT * FROM posts WHERE id = $1', [id]);
-return result.rows[0];
+  const postQuery = `
+    SELECT 
+      p.id, 
+      p.title, 
+      p.content, 
+      p.created_by, 
+      p.created_at,
+      u.username AS creatorName
+    FROM posts p
+    LEFT JOIN users u ON p.created_by = u.id
+    WHERE p.id = $1
+  `;
+  const postResult = await pool.query(postQuery, [id]);
+  const post = postResult.rows[0];
+
+  if (post) {
+    const catQuery = `
+      SELECT c.id, c.name
+      FROM categories c
+      JOIN post_categories pc ON c.id = pc.category_id
+      WHERE pc.post_id = $1
+    `;
+    const catResult = await pool.query(catQuery, [id]);
+    post.categories = catResult.rows;
+  }
+
+  return post;
 };
 
-//Create a new post
-const createPost = async (title, content, categories, createdBy) => {
-    const result = await pool.query(
-        'INSERT INTO posts (title, content, category, created_by, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING *', 
-        [title, content, JSON.stringify(categories), createdBy]
+// Update a post and its categories
+const updatePost = async (id, title, content, categoryIds) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Update the post details
+    const postResult = await client.query(
+      'UPDATE posts SET title = $1, content = $2 WHERE id = $3 RETURNING *',
+      [title, content, id]
     );
-    return result.rows[0];
+    const updatedPost = postResult.rows[0];
+
+    // Remove existing category associations
+    await client.query('DELETE FROM post_categories WHERE post_id = $1', [id]);
+
+    // Insert new category associations
+    const insertPromises = categoryIds.map((categoryId) =>
+      client.query(
+        'INSERT INTO post_categories (post_id, category_id) VALUES ($1, $2)',
+        [id, categoryId]
+      )
+    );
+    await Promise.all(insertPromises);
+
+    await client.query('COMMIT');
+    return updatedPost;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-//Update a post
-const updatePost = async (id, title, content, category) => {
-    const result = await pool.query(
-        'UPDATE posts SET title = $1, content = $2, category = $3 WHERE id = $4 RETURNING *',
-        [title, content, category, id]
-    );
-    return result.rows[0];
-}
-
-// Delete a post
 const deletePost = async (id) => {
-    await pool.query('DELETE FROM posts WHERE id = $1', [id]);
-  };
-  
-  module.exports = {
-    getAllPosts,
-    getPostsPrioritized,
-    getPostById,
-    createPost,
-    updatePost,
-    deletePost,
-  };
+  await pool.query('DELETE FROM posts WHERE id = $1', [id]);
+};
+
+module.exports = {
+  createPost,
+  getPostsPrioritized,
+  getPostById,
+  updatePost,
+  deletePost,
+};

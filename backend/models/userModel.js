@@ -42,6 +42,6 @@ module.exports = {
     findUserByUsername,
     findUserByEmail,
     getUsers,
-    getUserById
+    getUserById,
 }
 

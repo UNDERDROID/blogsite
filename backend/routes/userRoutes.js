@@ -16,6 +16,10 @@ router.post('/login', userController.loginUser);
 //Get users
 router.get('/', userController.getUsers);
 
+//Get a user by id
+router.get('/:id', userController.getUserById);
+
+//follow admin
 router.post('/follow-category', authenticateToken, userController.followCategory);
 
 module.exports = router;

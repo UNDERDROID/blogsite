@@ -1,5 +1,7 @@
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
+const categoryModel = require('../models/categoryModel');
+const tagModel = require('../models/tagModel');
 
 const getAllPosts = async (req, res) => {
   try {
@@ -34,35 +36,70 @@ const getPostById = async (req, res) => {
   }
 };
 
-const predefinedCategories =['Technology', 'Health', 'Gaming', 'Music', 'Art']
+const predefinedCategories = {
+  Technology: 1,
+  Health: 2,
+  Gaming: 3,
+  Music: 4,
+  Art: 5
+};
 
 const createPost = async (req, res) => {
-  const { title, content, categories } = req.body;
+  const { title, content, categories = [], tags = [] } = req.body;
   try {
-    //Validate categories is an array
-    if(!Array.isArray(categories)){
-      return res.status(400).json({error: 'categories must be an array'});
+    // Ensure arrays
+    if (!Array.isArray(categories) || !Array.isArray(tags)) {
+      return res.status(400).json({ error: 'Categories and tags must be arrays' });
+    }
+    
+    // Fetch all categories to build a mapping { name: id }
+    const allCategories = await categoryModel.getAllCategories();
+    const categoryMap = allCategories.reduce((map, cat) => {
+      map[cat.name] = cat.id;
+      return map;
+    }, {});
+
+    // Validate user-provided categories exist in DB
+    const invalidUserCats = categories.filter(cat => !categoryMap.hasOwnProperty(cat));
+    if (invalidUserCats.length) {
+      return res.status(400).json({ error: `Invalid categories: ${invalidUserCats.join(', ')}` });
     }
 
-    //check if all categories are valid
-    const invalidCategories = categories.filter((category)=>!predefinedCategories.includes(category));
-    if(invalidCategories.length>0){
-      return res.status(400).json({
-        error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${predefinedCategories.join(', ')}`,
-      });
-    }
-    const createdBy = req.user.id;
-    const newPost = await postModel.createPost(title, content, categories, createdBy);
+    // Get categories from provided tags
+    const tagCategoryNames = await tagModel.getCategoriesByTags(tags);
+    // Combine: user provided + from tags, then remove duplicates
+    const combinedCategoryNames = Array.from(new Set([...categories, ...tagCategoryNames]));
+
+    // Convert combined names to their IDs
+    const categoryIds = combinedCategoryNames.map(name => categoryMap[name]);
+
+    // createdBy should come from auth middleware (e.g., req.user.id)
+    const createdBy = req.user?.id || 1; // fallback for testing
+
+    const newPost = await postModel.createPost(title, content, categoryIds, createdBy);
     res.status(201).json(newPost);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create post' });
+    console.error('Error creating post:', error);
+    res.status(500).json({ error: 'Failed to create post', details: error.message });
   }
 };
 
 const updatePost = async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, categories } = req.body;
   try {
-    const updatedPost = await postModel.updatePost(req.params.id, title, content, categories);
+    if (!Array.isArray(categories)) {
+      return res.status(400).json({ error: 'categories must be an array' });
+    }
+
+    const invalidCategories = categories.filter(category => !predefinedCategories.hasOwnProperty(category));
+    if (invalidCategories.length > 0) {
+      return res.status(400).json({
+        error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${Object.keys(predefinedCategories).join(', ')}`
+      });
+    }
+
+    const categoryIds = categories.map(category => predefinedCategories[category]);
+    const updatedPost = await postModel.updatePost(req.params.id, title, content, categoryIds);
     res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update post' });

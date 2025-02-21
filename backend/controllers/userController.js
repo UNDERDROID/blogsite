@@ -89,6 +89,8 @@ const loginUser = async (req, res) => {
     }
   };
 
+
+  //Get all users
   const getUsers = async (req, res) => {
     try {
       const users = await userModel.getUsers();
@@ -98,27 +100,36 @@ const loginUser = async (req, res) => {
     }
   };
 
+  const getUserById = async (req, res) => {
+    try{
+      const user = await userModel.getUserById(req.params.id);
+      res.json(user);
+    }catch(error){
+      res.status(500).json({error: 'Failed to fetch user'});
+    }
+  }
+
   const followCategory = async (req, res) => {
-    const { category } = req.body;
+    const { category } = req.body; // Expect a single category name (e.g., "Health")
     const userId = req.user.id;
   
     try {
-      // Ensure the category is valid
+      // Define valid categories (or fetch from a categories table)
       const validCategories = ['Technology', 'Health', 'Gaming', 'Music', 'Art'];
-      if (!validCategories.includes(category[0])) {
+      if (!validCategories.includes(category)) {
         return res.status(400).json({ error: 'Invalid category' });
       }
   
       // Check if the user already follows the category
-      const checkQuery = 'SELECT * FROM followed_categories WHERE user_id = $1 AND category @> $2::jsonb';
-      const checkResult = await pool.query(checkQuery, [userId, JSON.stringify(category)]);
+      const checkQuery = 'SELECT * FROM followed_categories WHERE user_id = $1 AND category = $2';
+      const checkResult = await pool.query(checkQuery, [userId, category]);
       if (checkResult.rows.length > 0) {
         return res.status(400).json({ error: 'You are already following this category' });
       }
   
-      // Insert the followed category
-      const insertQuery = 'INSERT INTO followed_categories (user_id, category) VALUES ($1, $2::jsonb)';
-      await pool.query(insertQuery, [userId, JSON.stringify(category)]);
+      // Insert the followed category (each row represents one followed category)
+      const insertQuery = 'INSERT INTO followed_categories (user_id, category) VALUES ($1, $2)';
+      await pool.query(insertQuery, [userId, category]);
       res.status(201).json({ message: 'Category followed successfully' });
     } catch (error) {
       res.status(500).json({ error: 'Failed to follow category', details: error.message });
@@ -131,5 +142,6 @@ const loginUser = async (req, res) => {
     deleteUser,
     loginUser,
     getUsers,
+    getUserById,
     followCategory,
   };

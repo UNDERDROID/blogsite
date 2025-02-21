@@ -1,0 +1,37 @@
+:host {
+  display: flex;
+  justify-content: center; /* Center the cards horizontally */
+  padding: 20px; /* Add some space around the container */
+}
+
+.post-container {
+  max-width: 800px; /* Limit the width of the post container */
+  width: 100%; /* Allow it to be responsive */
+}
+
+.post-card {
+  margin-bottom: 20px; /* Add space between each card */
+  padding: 16px; /* Optional: Add padding inside the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  border-radius: 8px; /* Slightly rounded corners */
+  background-color: #f9f9f9; /* Light background for the card */
+}
+
+.priority-header {
+  font-weight: bold;
+  padding: 4px 8px;
+  color: #ffffff;
+  border-radius: 4px;
+}
+
+.priority-header[ng-reflect-ng-if="1"] {
+  background-color: #d32f2f; /* High priority - Red */
+}
+
+.priority-header[ng-reflect-ng-if="2"] {
+  background-color: #f57c00; /* Medium priority - Orange */
+}
+
+.priority-header[ng-reflect-ng-if="3"] {
+  background-color: #388e3c; /* Low priority - Green */
+}
