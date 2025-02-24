@@ -35,3 +35,7 @@
 .priority-header[ng-reflect-ng-if="3"] {
   background-color: #388e3c; /* Low priority - Green */
 }
+
+.post-card{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

@@ -13,7 +13,7 @@ const getAllPosts = async (req, res) => {
 };
 
 const getPostsPrioritized = async (req, res) => {
-  try{
+  try{                  
     const userId = req.user.id;
     const posts = await postModel.getPostsPrioritized(userId);
     res.status(200).json(posts);
@@ -76,13 +76,14 @@ const createPost = async (req, res) => {
     // createdBy should come from auth middleware (e.g., req.user.id)
     const createdBy = req.user?.id || 1; // fallback for testing
 
-    const newPost = await postModel.createPost(title, content, categoryIds, createdBy);
+    const newPost = await postModel.createPost(title, content, categoryIds, tags, createdBy);
     res.status(201).json(newPost);
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).json({ error: 'Failed to create post', details: error.message });
   }
 };
+
 
 const updatePost = async (req, res) => {
   const { title, content, categories } = req.body;
