@@ -22,7 +22,13 @@ const getCategoriesByTags = async (tags) => {
     return result.rows.map((row) => row.name);
   };
 
+  const getAllTags = async () => {
+    const result = await pool.query('SELECT id, name, category_id FROM tags');
+    return result.rows;
+  }
+
 module.exports = {
     createTag,
     getCategoriesByTags,
+    getAllTags
 }
