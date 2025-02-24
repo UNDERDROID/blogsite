@@ -1,5 +1,5 @@
 <mat-card class="login-card">
-    <mat-card-title>Login</mat-card-title>
+    <mat-card-title class="login-title">Login</mat-card-title>
     <mat-card-content>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="full-width">
@@ -20,6 +20,10 @@
   
         <button mat-raised-button color="primary" type="submit">Login</button>
       </form>
+      <p class="register-link">
+        Don't have an account?
+        <a [routerLink]="['/register']">Register here</a>
+      </p>
     </mat-card-content>
   </mat-card>
   

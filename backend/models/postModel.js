@@ -1,24 +1,55 @@
 const pool = require('../db/db');
 
-
-// Create a new post and link it to categories
-const createPost = async (title, content, categoryIds, createdBy) => {
+const createPost = async (title, content, categoryIds, tags, createdBy) => {
   const client = await pool.connect();
   try {
+    // Step 1: Check if all tags exist
+    const tagCheckResult = await client.query(
+      'SELECT name, id FROM tags WHERE name = ANY($1)',
+      [tags]
+    );
+    
+    const existingTags = tagCheckResult.rows.map(row => row.name);
+    const missingTags = tags.filter(tag => !existingTags.includes(tag));
+    
+    if (missingTags.length > 0) {
+      throw new Error(`The following tags do not exist: ${missingTags.join(', ')}`);
+    }
+
+    // Step 2: Create the post
     await client.query('BEGIN');
     const postResult = await client.query(
       'INSERT INTO posts (title, content, created_by, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
       [title, content, createdBy]
     );
     const newPost = postResult.rows[0];
-    // Insert associations
-    const promises = categoryIds.map(id =>
+
+    // Step 3: Insert associations for categories
+    const categoryPromises = categoryIds.map(id =>
       client.query(
         'INSERT INTO post_categories (post_id, category_id) VALUES ($1, $2)',
         [newPost.id, id]
       )
     );
-    await Promise.all(promises);
+    await Promise.all(categoryPromises);
+
+    // Step 4: Insert associations for tags
+    const tagPromises = tags.map(async (tagName) => {
+      const tagResult = await client.query(
+        'SELECT id FROM tags WHERE name = $1',
+        [tagName]
+      );
+      const tagId = tagResult.rows[0].id;
+
+      // Insert the post-tag association
+      await client.query(
+        'INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2)',
+        [newPost.id, tagId]
+      );
+    });
+    await Promise.all(tagPromises);
+
+    // Step 5: Commit the transaction
     await client.query('COMMIT');
     return newPost;
   } catch (error) {
@@ -28,6 +59,8 @@ const createPost = async (title, content, categoryIds, createdBy) => {
     client.release();
   }
 };
+
+
 
 const getPostsPrioritized = async (userId) => {
   const query = `

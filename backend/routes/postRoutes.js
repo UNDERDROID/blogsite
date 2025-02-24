@@ -1,5 +1,7 @@
 const express = require('express');
 const postController = require('../controllers/postController');
+const categoryController = require('../controllers/categoryController');
+const tagController = require('../controllers/tagController');
 const { authorizeRole } = require('../middlewares/roleMiddleware');
 const authenticateToken = require('../middlewares/authenticateToken');
 const router = express.Router();
@@ -16,5 +18,8 @@ router.delete('/:id', authorizeRole('admin'), postController.deletePost);
 router.put('/:id', authorizeRole(['editor', 'admin']), postController.updatePost);
 
 router.get('/:id', postController.getPostById);
+
+//create new category
+router.post('')
 
 module.exports = router;
