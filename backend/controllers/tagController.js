@@ -14,6 +14,16 @@ const createTag = async (req, res) => {
     }
   };
 
+const getAllTags = async (req, res) => {
+  try{
+    const tags = await tagModel.getAllTags();
+    res.json(tags);
+  }catch(error){
+    res.status(500).json({error: 'Failed to fetch tags'})
+  }
+}
+
 module.exports = {
     createTag,
+    getAllTags
 };
