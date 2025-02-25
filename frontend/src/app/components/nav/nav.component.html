@@ -1,0 +1,30 @@
+<mat-toolbar color="primary">
+    <!-- App Title -->
+    <span>My Blog</span>
+  
+    <!-- Spacer to push the next elements to the right -->
+    <span class="spacer"></span>
+  
+    <!-- Search Bar -->
+    <mat-form-field appearance="outline" class="search-bar">
+      <mat-label>Search Posts</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" class="search-input"/>
+      <button mat-icon-button matSuffix (click)="onSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  
+    <!-- Posts Menu -->
+    <button mat-button [matMenuTriggerFor]="postsMenu">
+      <mat-icon>article</mat-icon> Posts
+    </button>
+    <mat-menu #postsMenu="matMenu">
+      <button mat-menu-item (click)="navigateToPosts()">All Posts</button>
+      <button mat-menu-item (click)="navigateToCreatePost()">Create Post</button>
+    </mat-menu>
+  
+    <!-- Logout Button -->
+    <button mat-button (click)="onLogout()">
+      <mat-icon>logout</mat-icon> Logout
+    </button>
+  </mat-toolbar>

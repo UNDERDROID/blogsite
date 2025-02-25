@@ -1,7 +1,14 @@
 :host {
+  display: block;
+  
+}
+
+.app-container {
   display: flex;
-  justify-content: center; /* Center the cards horizontally */
-  padding: 20px; /* Add some space around the container */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center children horizontally */
+  padding-top: 90px; /* Add some space around the container */
+  overflow: visible;
 }
 
 .post-container {
