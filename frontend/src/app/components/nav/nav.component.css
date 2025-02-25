@@ -20,7 +20,10 @@
   .search-bar {
     margin-top: 20px;
     margin-left: 16px;
-    
+    color: aliceblue;
     width: 300px;
   }
 
+  .search-input{
+    color: white
+  }
