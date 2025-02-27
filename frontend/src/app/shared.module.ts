@@ -9,6 +9,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { FormsModule } from '@angular/forms';
 @NgModule({
   exports: [
@@ -21,6 +23,8 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     MatMenuModule,
     MatToolbarModule,
+    MatListModule,
+    MatSidenavModule,
     ReactiveFormsModule,
     FormsModule
   ],

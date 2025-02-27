@@ -1,0 +1,30 @@
+.sidenav-container {
+    height: 100vh;
+    display: flex;
+    position: fixed;
+  }
+  
+  .sidenav {
+    width: 250px;
+    background-color: #f5f5f5;
+  }
+  
+  mat-toolbar {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  mat-list-item {
+    cursor: pointer;
+    padding: 10px;
+  }
+  
+  mat-list-item:hover {
+    background: #e0e0e0;
+  }
+  
+  .mat-toolbar.mat-primary {
+    --mat-toolbar-container-background-color: #283ba5;
+    --mat-toolbar-container-text-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
