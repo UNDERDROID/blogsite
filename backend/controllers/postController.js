@@ -49,10 +49,16 @@ const getPostsbyTags = async(req, res) => {
     const tagIds = tags.split(',').map(id => parseInt(id.trim()));
 
     const result=await pool.query(
-      `SELECT DISTINCT p.*
+      `SELECT DISTINCT p.*,
+      ARRAY_AGG(DISTINCT c.name) AS categories,
+      ARRAY_AGG(DISTINCT t.name) AS tags
       FROM posts p
       JOIN post_tags pt ON p.id = pt.post_id
+      JOIN tags t ON pt.tag_id = t.id
+      LEFT JOIN post_categories pc ON p.id = pc.post_id
+      LEFT JOIN categories c ON pc.category_id = c.id
       WHERE pt.tag_id = ANY($1::int[])
+      GROUP BY p.id
   `, [tagIds]
 );
     if(result.rows.length === 0){
@@ -82,10 +88,16 @@ const getPostsbyCategories = async(req, res) => {
     }
 
     const result = await pool.query(
-      `SELECT DISTINCT p.*
-      FROM posts p
-      JOIN post_categories pc ON p.id =pc.post_id
-      WHERE pc.category_id = ANY($1::int[])`, [categoryIds]
+      `SELECT DISTINCT p.*, 
+      ARRAY_AGG(DISTINCT c.name) AS categories,
+      ARRAY_AGG(DISTINCT t.name) AS tags
+FROM posts p
+JOIN post_categories pc ON p.id = pc.post_id
+LEFT JOIN categories c ON pc.category_id = c.id
+LEFT JOIN post_tags pt ON p.id = pt.post_id
+LEFT JOIN tags t ON pt.tag_id = t.id
+WHERE pc.category_id = ANY($1::int[])
+GROUP BY p.id`, [categoryIds]
     );
     if(result.rows.length === 0){
       return res.status(404).json({message: 'No posts found for this category'});
