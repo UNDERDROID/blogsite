@@ -17,7 +17,17 @@ router.delete('/:id', authorizeRole('admin'), postController.deletePost);
 // Editors can only edit posts created by admins
 router.put('/:id', authorizeRole(['editor', 'admin']), postController.updatePost);
 
+//Get post by tags
+router.get('/by-tags', postController.getPostsbyTags);
+
+//Get post by categories
+router.get('/by-categories', postController.getPostsbyCategories);
+
 router.get('/:id', postController.getPostById);
+
+
+
+
 
 //create new category
 router.post('')

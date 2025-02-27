@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { NavComponent } from "../nav/nav.component";
 import { ActivatedRoute } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-posts',
@@ -19,7 +20,12 @@ export class PostsComponent implements OnInit {
 posts: any[] = [];
 filteredPosts: any[] = [];
 
-constructor(private authService: AuthService, private http: HttpClient, private route: ActivatedRoute){}
+constructor(
+  private authService: AuthService, 
+  private http: HttpClient, 
+  private route: ActivatedRoute,
+  private sanitizer: DomSanitizer
+){}
 
 ngOnInit(): void {
   this.fetchPosts();
@@ -33,14 +39,21 @@ ngOnInit(): void {
 fetchPosts(): void{
   this.authService.getPosts().subscribe(
     (data)=>{
-      this.posts = data;
-      this.filteredPosts = data;
+      //Sanitize post content
+      this.posts = data.map(post=> {
+        return{
+          ...post,
+          content: this.sanitizer.bypassSecurityTrustHtml(post.content)
+        }
+      });
+      this.filteredPosts = this.posts;
       console.log('fetched post:', data);
     },
   (error)=>{
     console.error('Error fetching posts', error);
   }
   )
+  
 }
 
 filterPosts(query: string) {
