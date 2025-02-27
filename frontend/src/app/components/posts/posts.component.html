@@ -1,6 +1,11 @@
 <div class="app-container">
 <app-nav />
+
+<div class="content">
+<app-sidebar class="sidebar"></app-sidebar>
+
 <div class="post-container">
+  
 <div *ngFor="let post of filteredPosts">
     <!-- <div *ngIf="post.priority === 1" class="priority-header">High Priority</div>
     <div *ngIf="post.priority === 2" class="priority-header">Medium Priority</div>
@@ -14,12 +19,13 @@
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ post.content }}</p>
+        <p [innerHTML]="post.safeContent"></p>
         <p><strong>Category:</strong> {{ post.categories }}</p>
         <p><strong>Tags:</strong> {{ post.tags }}</p>
       </mat-card-content>
     </mat-card>
   </div>
+</div>
 </div>
 </div>
   

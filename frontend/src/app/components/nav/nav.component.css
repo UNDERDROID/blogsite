@@ -11,7 +11,11 @@
     padding-top: 5px;
     padding-bottom: 5px;
   }
-  
+  .mat-toolbar.mat-primary {
+    --mat-toolbar-container-background-color: #3f51b5;
+    --mat-toolbar-container-text-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
   
   .spacer {
     flex: 1 1 auto;
@@ -20,7 +24,10 @@
   .search-bar {
     margin-top: 20px;
     margin-left: 16px;
-    
+    color: aliceblue;
     width: 300px;
   }
 
+  .search-input{
+    color: white
+  }

@@ -2,6 +2,7 @@ const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
 const categoryModel = require('../models/categoryModel');
 const tagModel = require('../models/tagModel');
+const pool = require('../db/db');
 
 const getAllPosts = async (req, res) => {
   try {
@@ -32,9 +33,68 @@ const getPostById = async (req, res) => {
       res.status(404).json({ error: 'Post not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch post' });
+    res.status(500).json({ error: 'Failed to fetch post by id' });
   }
 };
+
+//Get posts by tags
+const getPostsbyTags = async(req, res) => {
+  const { tags } = req.query;
+
+  try{
+    if(!tags){
+      return res.status(400).json({message: 'tags are required'});
+    }
+
+    const tagIds = tags.split(',').map(id => parseInt(id.trim()));
+
+    const result=await pool.query(
+      `SELECT DISTINCT p.*
+      FROM posts p
+      JOIN post_tags pt ON p.id = pt.post_id
+      WHERE pt.tag_id = ANY($1::int[])
+  `, [tagIds]
+);
+    if(result.rows.length === 0){
+      return res.status(404).json({message: "No posts found for this tag"});
+    }
+
+    res.status(200).json(result.rows);
+  }catch(error){
+    console.error('Error fetching posts by tag:', error);
+  }
+}
+
+//Get posts by categories
+const getPostsbyCategories = async(req, res) => {
+  const { categories } = req.query;
+  
+  try{
+
+    if(!categories){
+      res.status(400).json({message: 'categories are required'});
+    }
+
+    const categoryIds = categories.split(',').map(id=>parseInt(id.trim())).filter(id=>!isNaN(id));
+
+    if (categoryIds===0){
+      return res.status(400).json({message: 'Invalid category IDs provided'});
+    }
+
+    const result = await pool.query(
+      `SELECT DISTINCT p.*
+      FROM posts p
+      JOIN post_categories pc ON p.id =pc.post_id
+      WHERE pc.category_id = ANY($1::int[])`, [categoryIds]
+    );
+    if(result.rows.length === 0){
+      return res.status(404).json({message: 'No posts found for this category'});
+    }
+    res.status(200).json(result.rows);
+  }catch(error){
+    console.error('Error fetchin posts by category', error);
+  }
+}
 
 const predefinedCategories = {
   Technology: 1,
@@ -121,6 +181,8 @@ module.exports = {
   getAllPosts,
   getPostsPrioritized,
   getPostById,
+  getPostsbyTags,
+  getPostsbyCategories,
   createPost,
   updatePost,
   deletePost,

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SharedModule } from '../../shared.module';
 import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-nav',
@@ -12,7 +13,7 @@ import { RouterModule, Router } from '@angular/router';
 export class NavComponent {
   searchQuery: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   onSearch(): void {
     if (this.searchQuery.trim()) {
@@ -32,7 +33,13 @@ export class NavComponent {
   // Handle logout
   onLogout(): void {
     // Add your logout logic here (e.g., clear tokens, redirect to login)
-    localStorage.removeItem('authToken');
-    this.router.navigate(['/login']);
+    this.authService.logout();
+    
   }  
+
+  isAdmin(): boolean {
+    return localStorage.getItem('userRole') === '"admin"'; 
+  }
+  
 }
+

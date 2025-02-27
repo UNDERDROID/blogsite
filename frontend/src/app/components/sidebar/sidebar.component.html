@@ -1,0 +1,22 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened class="sidenav">
+      <mat-toolbar color="primary">Categories & Tags</mat-toolbar>
+  
+      <mat-list>
+        <h3>Categories</h3>
+        <mat-list-item *ngFor="let category of categories" (click)="getPostsByCategory(category.id)">
+          <mat-icon>folder</mat-icon>
+          {{ category.name }}
+        </mat-list-item>
+      </mat-list>
+  
+      <mat-list>
+        <h3>Tags</h3>
+        <mat-list-item *ngFor="let tag of tags" (click)="getPostsByTag(tag.id)">
+          <mat-icon>label</mat-icon>
+          {{ tag.name }}
+        </mat-list-item>
+      </mat-list>
+    </mat-sidenav>
+  </mat-sidenav-container>
+  
