@@ -77,10 +77,13 @@ const getPostsPrioritized = async (userId) => {
         p.created_by,
         p.created_at,
         u.username AS creator_name,
-        ARRAY_AGG(DISTINCT c.name) AS categories
+        ARRAY_AGG(DISTINCT c.name) AS categories,
+        ARRAY_AGG(DISTINCT t.name) AS tags
       FROM posts p
       LEFT JOIN post_categories pc ON p.id = pc.post_id
       LEFT JOIN categories c ON pc.category_id = c.id
+      LEFT JOIN post_tags pt ON p.id = pt.post_id
+      LEFT JOIN tags t on pt.tag_id = t.id
       LEFT JOIN users u ON p.created_by = u.id
       GROUP BY p.id, u.username, p.created_at
     )
