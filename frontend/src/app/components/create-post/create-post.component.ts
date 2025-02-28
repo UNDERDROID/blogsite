@@ -128,6 +128,8 @@ export class CreatePostComponent implements OnInit {
             // Force Angular to detect changes and update the view
             this.categories = [...this.categories];
             this.tags = [...this.tags];
+
+            this.router.navigate(['/fyp']);
           },
           error: (error) => {
             console.error('Error creating post', error);
