@@ -17,8 +17,13 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class LoginComponent implements OnInit{
   loginForm: FormGroup;
+  errorMessage: string='';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router){
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private router: Router
+  ){
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -42,6 +47,7 @@ export class LoginComponent implements OnInit{
         },
         error: (err) => {
           console.error('Login failed', err);
+          this.errorMessage='Invalid username or password';
         }
       })
     

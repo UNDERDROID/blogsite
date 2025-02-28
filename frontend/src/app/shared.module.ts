@@ -12,6 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { FormsModule } from '@angular/forms';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 @NgModule({
   exports: [
     CommonModule,
@@ -26,7 +27,8 @@ import { FormsModule } from '@angular/forms';
     MatListModule,
     MatSidenavModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgxDatatableModule
   ],
 })
 export class SharedModule {}

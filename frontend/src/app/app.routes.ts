@@ -5,6 +5,7 @@ import { PostsComponent } from './components/posts/posts.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
 import { adminGuard } from './guards/admin.guard';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { UserListComponent } from './components/user-list/user-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -12,5 +13,6 @@ export const routes: Routes = [
     {path: 'fyp', component: PostsComponent},
     {path: 'sidebar', component: SidebarComponent},
     {path: 'create-post', component: CreatePostComponent, canActivate: [adminGuard]},
+    {path: 'user-list', component: UserListComponent, canActivate: [adminGuard]},
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

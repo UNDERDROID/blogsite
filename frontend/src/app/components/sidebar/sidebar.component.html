@@ -4,17 +4,24 @@
   
       <mat-list>
         <h3>Categories</h3>
-        <mat-list-item *ngFor="let category of categories" (click)="getPostsByCategory(category.id)">
-          <mat-icon>folder</mat-icon>
-          {{ category.name }}
+        <mat-list-item 
+        *ngFor="let category of categories" 
+        (click)="toggleCategory(category.id)"
+        [class.selected]="selectedCategories.includes(category.id)"
+        >
+        <mat-icon>{{ selectedCategories.includes(category.id) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+        {{ category.name }}
         </mat-list-item>
       </mat-list>
   
       <mat-list>
         <h3>Tags</h3>
-        <mat-list-item *ngFor="let tag of tags" (click)="getPostsByTag(tag.id)">
-          <mat-icon>label</mat-icon>
-          {{ tag.name }}
+        <mat-list-item *ngFor="let tag of tags" 
+        (click)="toggleTag(tag.id)"
+        [class.selected]="selectedTags.includes(tag.id)"
+        >
+        <mat-icon>{{ selectedTags.includes(tag.id) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+{{ tag.name }}
         </mat-list-item>
       </mat-list>
     </mat-sidenav>

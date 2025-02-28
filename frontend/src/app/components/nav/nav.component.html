@@ -16,11 +16,12 @@
   
     <!-- Posts Menu -->
     <button mat-button [matMenuTriggerFor]="postsMenu">
-      <mat-icon>article</mat-icon> Posts
+      <mat-icon>article</mat-icon> 
     </button>
     <mat-menu #postsMenu="matMenu">
       <button mat-menu-item (click)="navigateToPosts()">All Posts</button>
       <button *ngIf="isAdmin()" mat-menu-item (click)="navigateToCreatePost()">Create Post</button>
+      <button *ngIf="isAdmin()" mat-menu-item (click)="navigateToUserList()">User List</button>
     </mat-menu>
   
     <!-- Logout Button -->

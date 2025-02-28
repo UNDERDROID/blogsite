@@ -1,0 +1,30 @@
+<div class="app-container">
+<app-nav />
+<div class="container">
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Users</ion-card-title> <!-- Center align title -->
+    </ion-card-header>
+
+    <ion-card-content>
+      <ngx-datatable
+        class="material bordered"
+        [rows]="users"
+        [columns]="columns"
+        [columnMode]="'force'"
+        [headerHeight]="50"
+        [rowHeight]="'auto'"
+        [footerHeight]="50"
+        [loadingIndicator]="loading"
+        [limit]="10"
+        [count]="totalElements"
+        [offset]="page"
+        (page)="setPage($event)"
+      >
+      </ngx-datatable>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+</div>
+</div>

@@ -1,0 +1,23 @@
+:root {
+  --ion-color-primary: #3880ff;
+  --ion-color-secondary: #3dc2ff;
+  --ion-text-color: #222;
+  --ion-item-background: #f8f9fa;
+  --ion-border-color: #ddd;
+  --ion-card-background: #fff;
+}
+.container {
+  max-width: 95%;
+  margin: 20px auto;
+  margin-top: 60px;
+  padding: 20px;
+  background: var(--ion-background-color);
+  border-radius: 8px;
+}
+
+ngx-datatable {
+  border-radius: 8px;
+  overflow: scroll;
+  background: var(--ion-item-background);
+}
+

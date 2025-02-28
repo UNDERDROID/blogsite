@@ -28,6 +28,7 @@
     width: 300px;
   }
 
-  .search-input{
-    color: white
-  }
+  .mat-mdc-form-field:not(.mat-form-field-no-animations) .mdc-text-field__input {
+    color: aliceblue;
+    transition: opacity 150ms 0mscubic-bezier(0.4, 0, 0.2, 1);
+}

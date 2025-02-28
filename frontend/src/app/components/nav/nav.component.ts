@@ -30,6 +30,10 @@ export class NavComponent {
     this.router.navigate(['/create-post']);
   }
 
+  navigateToUserList(): void {
+    this.router.navigate(['/user-list']);
+  }
+
   // Handle logout
   onLogout(): void {
     // Add your logout logic here (e.g., clear tokens, redirect to login)
