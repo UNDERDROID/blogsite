@@ -13,6 +13,14 @@ const deleteUser = async (userId) => {
     return result.rows[0];
 };
 
+//Update a user
+const updateUser = async (id, username, email, role)=>{
+    const result = await pool.query('UPDATE users SET username=$1, email=$2, role=$3 WHERE id =$4 RETURNING *',
+        [username, email, role, id]
+    );
+    return result.rows[0];
+}
+
 //Find user by username
 const findUserByUsername = async (username) => {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
@@ -39,6 +47,7 @@ const getUserById = async (id)=>{
 module.exports = {
     createUser,
     deleteUser,
+    updateUser,
     findUserByUsername,
     findUserByEmail,
     getUsers,

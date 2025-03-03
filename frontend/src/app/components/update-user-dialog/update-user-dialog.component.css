@@ -1,0 +1,34 @@
+/* Style the floating labels */
+mat-label {
+    color: rgba(0, 0, 0, 0.6); /* Gray color for the label */
+    font-size: 14px;
+  }
+  
+  /* Style the focused label */
+  .mat-form-field.mat-focused mat-label {
+    color: #3f51b5; /* Primary color when the field is focused */
+  }
+  
+  /* Style the input text */
+  input.mat-input-element {
+    font-size: 16px;
+    min-width: 100px;
+    color: rgba(0, 0, 0, 0.87); /* Dark color for the input text */
+  }
+
+  .mat-mdc-form-field{
+    flex: auto;
+    min-width: 0;
+    width: 320px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.cancel-button{
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.save-button{
+    margin-bottom: 15px;
+}

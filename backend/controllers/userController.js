@@ -55,19 +55,88 @@ const registerUser = async (req, res) => {
       const userId = req.params.id;
       const requesterId = req.user.id;
 
-      if(requesterId!==userId && req.user.role!=='admin'){
+      if(parseInt(requesterId)!==parseInt(userId) && req.user.role!=='admin'){
         return res.status(403).json({error: 'Unauthorized to delete user'})
       }
 
       const deletedUser = await userModel.deleteUser(userId);
-      if(!deleteUser){
+      if(!deletedUser){
         return res.status(404).json({error: 'User not found'})
       }
       return res.status(200).json({message:'User deleted'});
     }catch(error){
-      res.status(500).json({error:'Failed to delete user'});
+      res.status(500).json({error:'Failed to delete user', details: error.message});
+
     }
   };
+
+  //Update User
+  const updateUser = async (req, res) => {
+    const {id} = req.params;
+    const {username, email, role} = req.body;
+    const requesterId = req.user.id;
+    const requesterRole = req.user.role;
+
+    try{
+      //Check if user exists
+      const userToUpdate = await userModel.getUserById(id);
+      if(!userToUpdate){
+        return res.status(404).json({error:'User not found'});
+      }
+
+      //Authorization: Only admins and user themselves can update
+      if(parseInt(requesterId)!==parseInt(id) && requesterRole!=='admin'){
+        return res.status(403).json({error: 'Unauthorized to update user'});
+      }
+       // Validate email format (if email is being updated)
+       if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        // Check if the new email is already registered
+        const existingEmail = await userModel.findUserByEmail(email);
+        if (existingEmail && existingEmail.id !== parseInt(id)) {
+            return res.status(400).json({ error: 'Email already registered' });
+        }
+    }
+
+     // Validate username (if username is being updated)
+     if (username) {
+      // Check if the new username is already taken
+      const existingUser = await userModel.findUserByUsername(username);
+      if (existingUser && existingUser.id !== parseInt(id)) {
+          return res.status(400).json({ error: 'Username already exists' });
+      }
+  }
+
+   // Validate role (if role is being updated)
+   if (role) {
+    const validRoles = ['admin', 'user', 'editor'];
+    if (!validRoles.includes(role)) {
+        return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    // Only admins can change roles
+    if (requesterRole !== 'admin') {
+        return res.status(403).json({ error: 'Unauthorized to change role' });
+    }
+}
+ // Update the user
+ const updatedUser = await userModel.updateUser(id, username, email, role);
+ if (!updatedUser) {
+     return res.status(500).json({ error: 'Failed to update user' });
+ }
+
+ // Return the updated user (excluding sensitive data like password)
+ const { password, ...userWithoutPassword } = updatedUser;
+ res.status(200).json({ message: 'User updated successfully', user: userWithoutPassword });
+} catch (error) {
+ res.status(500).json({ error: 'Failed to update user', details: error.message });
+}
+    }
+
 
   // Login user and return JWT
 const loginUser = async (req, res) => {
@@ -142,6 +211,7 @@ const loginUser = async (req, res) => {
   module.exports = {
     registerUser,
     deleteUser,
+    updateUser,
     loginUser,
     getUsers,
     getUserById,

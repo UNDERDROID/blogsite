@@ -15,3 +15,7 @@ app-sidebar {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   }
 
+  .error-snackbar {
+    background-color: #d32f2f; 
+    color: white; 
+  }

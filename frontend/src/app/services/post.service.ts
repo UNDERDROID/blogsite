@@ -6,9 +6,9 @@ import { catchError } from 'rxjs';
 export interface PostData {
   title: string;
   content: string;
-  categories: string[]; // assuming backend expects category IDs
-  tags: string[];       // assuming backend expects tag IDs
-  createdBy?: number;   // optional, can be set in backend from token/session
+  categories: string[]; 
+  tags: string[];       
+  createdBy?: number;   
 }
 
 @Injectable({

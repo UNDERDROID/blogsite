@@ -15,7 +15,7 @@
 }
 .content {
   display: flex;
-  flex-direction: row; /* Sidebar and posts side by side */
+  flex-direction: row; 
   flex-grow: 1;
   margin-top: 60px;
 }
