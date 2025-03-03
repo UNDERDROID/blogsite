@@ -25,10 +25,6 @@ router.get('/by-categories', postController.getPostsbyCategories);
 
 router.get('/:id', postController.getPostById);
 
-
-
-
-
 //create new category
 router.post('')
 

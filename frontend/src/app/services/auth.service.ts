@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { error } from 'jquery';
 
 export interface RegisterData {
   username: string;
@@ -24,6 +25,32 @@ export class AuthService {
 
   register(registerData: RegisterData): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/register`, registerData);
+  }
+
+  deleteUser(userId: number): Observable<any>{
+    const token = localStorage.getItem('authToken') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    }) 
+    return this.http.delete(`${this.apiUrl}/users/${userId}`, { headers }).pipe(
+      catchError((error)=>{
+        console.error('API error:', error);
+      throw error;
+    })
+  )
+  }
+
+  updateUser(userId: number, updateData: {username?: string, email?: string, role?: string}): Observable<any>{
+    const token = localStorage.getItem('authToken') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.patch(`${this.apiUrl}/users/${userId}`, updateData, { headers }).pipe(
+      catchError((error) => {
+        console.error('API error:', error);
+        throw error;
+      })
+    )
   }
 
   login(username: string, password: string): Observable<any>{

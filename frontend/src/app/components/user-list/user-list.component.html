@@ -11,7 +11,7 @@
       <ngx-datatable
         class="material bordered"
         [rows]="users"
-        [columns]="columns"
+        
         [columnMode]="'force'"
         [headerHeight]="50"
         [rowHeight]="'auto'"
@@ -22,6 +22,42 @@
         [offset]="page"
         (page)="setPage($event)"
       >
+      <ngx-datatable-column
+      name="ID" 
+      >
+    <!-- <ng-template
+    ngx-datatable-cell-template
+    let-rowIndex="rowIndex"
+    let-value="value"
+    let-row="row"
+    >
+      {{value}}
+      <button>Click Me</button>
+    </ng-template> -->
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Username" prop="username"/>
+    <ngx-datatable-column name="Email" prop="email" />
+    <ngx-datatable-column name="Role" prop="role" />
+    <ngx-datatable-column name="Operations">
+      <ng-template 
+      ngx-datatable-cell-template
+      let-rowIndex="rowIndex"
+      let-value="value"
+      let-row="row">
+      <!-- Update Button -->
+      <button mat-raised-button color="primary" (click)="openUpdateUserDialog(row)" >
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+
+      <!-- Delete Button -->
+      <button mat-raised-button color="warn" class="delete-button" (click)="deleteUser(row.id)">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+      
+    </ng-template>
+    </ngx-datatable-column>
       </ngx-datatable>
     </ion-card-content>
   </ion-card>

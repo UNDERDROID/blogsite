@@ -21,3 +21,6 @@ ngx-datatable {
   background: var(--ion-item-background);
 }
 
+.delete-button{
+  left: 5px;
+}

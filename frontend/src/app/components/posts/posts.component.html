@@ -7,10 +7,6 @@
 <div class="post-container">
   
 <div *ngFor="let post of filteredPosts">
-    <!-- <div *ngIf="post.priority === 1" class="priority-header">High Priority</div>
-    <div *ngIf="post.priority === 2" class="priority-header">Medium Priority</div>
-    <div *ngIf="post.priority === 3" class="priority-header">Low Priority</div> -->
-  
     <mat-card class="post-card">
       <mat-card-header>
         <mat-card-title>{{ post.title }}</mat-card-title>

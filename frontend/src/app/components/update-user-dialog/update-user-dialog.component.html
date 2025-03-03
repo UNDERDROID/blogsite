@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Update User</h2>
+<mat-dialog-content>
+  <form [formGroup]="updateForm">
+    <!-- Username Field -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username" />
+    </mat-form-field>
+
+    <!-- Email Field -->
+    <mat-form-field>
+      <mat-label for="email">Email</mat-label>
+      <input matInput formControlName="email" />
+    </mat-form-field>
+
+    <!-- Role Field -->
+    <mat-form-field>
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option value="admin">Admin</mat-option>
+        <mat-option value="user">User</mat-option>
+        <mat-option value="editor">Editor</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="warn" class="cancel-button" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" class="save-button" (click)="onSave()" [disabled]="updateForm.invalid">Save</button>
+</mat-dialog-actions>
