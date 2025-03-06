@@ -6,6 +6,9 @@ import { CreatePostComponent } from './components/create-post/create-post.compon
 import { adminGuard } from './guards/admin.guard';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { PostListComponent } from './components/post-list/post-list.component';
+import { PostDetailComponent } from './components/post-detail/post-detail.component';
+import { EditPostComponent } from './components/edit-post/edit-post.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -14,5 +17,8 @@ export const routes: Routes = [
     {path: 'sidebar', component: SidebarComponent},
     {path: 'create-post', component: CreatePostComponent, canActivate: [adminGuard]},
     {path: 'user-list', component: UserListComponent, canActivate: [adminGuard]},
+    {path: 'post-list', component: PostListComponent, canActivate: [adminGuard]},
+    {path: 'post/:id', component: PostDetailComponent},
+    {path: 'edit-post/:id', component: EditPostComponent},
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

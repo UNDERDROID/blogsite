@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
     <!-- App Title -->
-    <span>Blog-Site</span>
+    <span (click)="navigateToPosts()">Blog-Site</span>
   
     <!-- Spacer to push the next elements to the right -->
     <span class="spacer"></span>
@@ -22,6 +22,7 @@
       <button mat-menu-item (click)="navigateToPosts()">All Posts</button>
       <button *ngIf="isAdmin()" mat-menu-item (click)="navigateToCreatePost()">Create Post</button>
       <button *ngIf="isAdmin()" mat-menu-item (click)="navigateToUserList()">User List</button>
+      <button *ngIf="isAdmin()" mat-menu-item (click)="navigateToPostList()">Post List</button>
     </mat-menu>
   
     <!-- Logout Button -->

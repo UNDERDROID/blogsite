@@ -7,18 +7,37 @@
 <div class="post-container">
   
 <div *ngFor="let post of filteredPosts">
-    <mat-card class="post-card">
+    <mat-card 
+    class="post-card"
+    
+    [class.expanded]="post.isExpanded"
+    >
       <mat-card-header>
         <mat-card-title>{{ post.title }}</mat-card-title>
         <mat-card-subtitle>
           By {{ post.creator_name }} | {{ post.created_at | date: 'medium' }}
         </mat-card-subtitle>
+        
+       
       </mat-card-header>
-      <mat-card-content>
+      <div class="tags-cat">
+        <p><strong>Category:</strong> {{ post.categories }}</p>
+        <p><strong>Tags:</strong> {{ post.tags }}</p>
+      </div>
+
+      <p (click)="navigateToPostDetail(post.id)" class="view-details">View Details</p>
+      
+      <mat-card-content *ngIf="post.isExpanded">
         <p [innerHTML]="post.safeContent"></p>
         <p><strong>Category:</strong> {{ post.categories }}</p>
         <p><strong>Tags:</strong> {{ post.tags }}</p>
       </mat-card-content>
+
+      <!-- <mat-card-content>
+        <p [innerHTML]="post.safeContent"></p>
+        <p><strong>Category:</strong> {{ post.categories }}</p>
+        <p><strong>Tags:</strong> {{ post.tags }}</p>
+      </mat-card-content> -->
     </mat-card>
   </div>
 </div>

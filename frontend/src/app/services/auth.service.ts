@@ -67,6 +67,23 @@ export class AuthService {
     return this.http.get<any[]>(`${this.apiUrl}/posts/fyp`, { headers });
   }
 
+  getPostById(postId: number): Observable<any> {
+    const token = localStorage.getItem('authToken') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.get<any>(`${this.apiUrl}/posts/${postId}`, {headers});
+  }
+
+  updatePost(postId: number, title: string, content: string, categories: string[], tags: string[]): Observable<any>{
+    const token = localStorage.getItem('authToken') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    const postData = {title, content, categories, tags};
+    return this.http.put(`${this.apiUrl}/posts/${postId}`,postData, {headers});
+  }
+
   getUsers(): Observable<any[]>{
     const token = localStorage.getItem('authToken') || '';
     const headers = new HttpHeaders({

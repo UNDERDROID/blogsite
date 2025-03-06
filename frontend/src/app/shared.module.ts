@@ -31,6 +31,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     MatSelectModule,
     FormsModule,
     NgxDatatableModule,
+    
   ],
 })
 export class SharedModule {}

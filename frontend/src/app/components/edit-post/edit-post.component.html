@@ -1,0 +1,55 @@
+<app-nav />
+<div class="container">
+<mat-card class="edit-post-container">
+    <mat-card-title>Edit Post</mat-card-title>
+  
+    <form [formGroup]="editForm" (ngSubmit)="savePost()">
+      <!-- Title Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" required />
+      </mat-form-field>
+  
+      <!-- Content Field -->
+        <mat-label>Content</mat-label>
+        <div #summernote formControlName="content" 
+        class="content"></div>
+
+        <!-- <textarea 
+        matInput 
+        formControlName="content" 
+        class="content"
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="3"
+        cdkAutosizeMaxRows="15">
+        ></textarea> -->
+  
+
+      <div class="form-group">
+        <mat-label>Categories</mat-label>
+        <div *ngFor="let category of categories">
+          <mat-checkbox 
+          [value]="category.name" 
+          [checked]="selectedCategories.includes(category.name)"
+          (change)="onCategoryChange(category, $event)">{{category.name}}</mat-checkbox>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <mat-label>Tags</mat-label>
+        <div *ngFor="let tag of tags">
+          <mat-checkbox 
+          [value]="tag.name"
+          [checked]="selectedTags.includes(tag.name)"
+          (change)="onTagChange(tag, $event) ">{{tag.name}}</mat-checkbox>
+        </div>
+      </div>
+  
+      <!-- Buttons -->
+      <div class="button-group">
+        <button mat-raised-button color="warn" routerLink="/post-list" class="cancel-btn">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">Save</button>
+      </div>
+    </form>
+  </mat-card>
+</div>
