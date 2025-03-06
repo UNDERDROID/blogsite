@@ -24,6 +24,22 @@ const getPostsPrioritized = async (req, res) => {
   }
 }
 
+const getPostsForList = async (req, res) => {
+  try{
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const posts = await postModel.getPostsForList(page, pageSize);
+    res.status(200).json(posts);
+  }catch(error){
+    console.error('Error fetching posts for list', error);
+    res.status(500).json({
+      error: 'Failed to fetch posts for list', 
+      details: error.message
+    });
+  }
+}
+
 const getPostById = async (req, res) => {
   try {
     const post = await postModel.getPostById(req.params.id);
@@ -234,6 +250,7 @@ const deletePost = async (req, res) => {
 module.exports = {
   getAllPosts,
   getPostsPrioritized,
+  getPostsForList,
   getPostById,
   getPostsbyTags,
   getPostsbyCategories,

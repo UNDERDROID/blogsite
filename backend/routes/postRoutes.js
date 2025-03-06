@@ -23,7 +23,12 @@ router.get('/by-tags', postController.getPostsbyTags);
 //Get post by categories
 router.get('/by-categories', postController.getPostsbyCategories);
 
+//Get  post by page and pageSize
+router.get('/by-size',postController.getPostsForList);
+
 router.get('/:id', postController.getPostById);
+
+
 
 //create new category
 router.post('')

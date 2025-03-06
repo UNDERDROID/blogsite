@@ -48,6 +48,15 @@ export class PostService {
     })
   }
 
+  getPostsForList(page: number = 1 , pageSize: number = 10): Observable<any>{
+    const token = localStorage.getItem('authToken') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.apiUrl}/by-size?page=${page}&pageSize=${pageSize}`, { headers });
+  }
+
   deletePost(postId: number): Observable<any>{
     const token = localStorage.getItem('authToken')
     const headers = new HttpHeaders({
