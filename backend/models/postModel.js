@@ -60,6 +60,46 @@ const createPost = async (title, content, categoryIds, tags, createdBy) => {
   }
 };
 
+const getPostsForList = async (page =1, pageSize=10) =>{
+  const offset=(page-1)*pageSize;
+  const dataQuery = `
+   SELECT 
+      p.id, 
+      p.title, 
+      p.content, 
+      p.created_by, 
+      p.created_at,
+      u.username AS creator_name,
+      ARRAY_AGG(DISTINCT c.name) AS categories,
+      ARRAY_AGG(DISTINCT t.name) AS tags
+    FROM posts p
+    LEFT JOIN post_categories pc ON p.id = pc.post_id
+    LEFT JOIN categories c ON pc.category_id = c.id
+    LEFT JOIN post_tags pt ON p.id = pt.post_id
+    LEFT JOIN tags t ON pt.tag_id = t.id
+    LEFT JOIN users u ON p.created_by = u.id
+    GROUP BY p.id, u.username
+    LIMIT $1 OFFSET $2;
+  `
+
+  const countQuery = `SELECT COUNT (DISTINCT p.id) as total FROM posts p;`
+
+  try{
+    const [dataResult, countResult] = await Promise.all([
+      pool.query(dataQuery, [pageSize, offset]),
+      pool.query(countQuery)
+    ]);
+
+    return{
+      rows: dataResult.rows,
+      count: parseInt(countResult.rows[0].total)
+    };
+  }catch(error){
+    console.log('Error fetching posts for list', error);
+    throw error;
+  }
+}
+
 
 
 const getPostsPrioritized = async (userId) => {
@@ -209,6 +249,7 @@ const deletePost = async (id) => {
 module.exports = {
   createPost,
   getPostsPrioritized,
+  getPostsForList,
   getPostById,
   updatePost,
   deletePost,

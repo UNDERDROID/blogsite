@@ -21,7 +21,7 @@ export class PostListComponent implements OnInit{
   posts: any[]=[];
   totalElements: number = 0;
   loading = false;
-  page=0;
+  page=1;
   limit=10;
   pageSizes=[5, 10, 15];
 
@@ -33,11 +33,11 @@ ngOnInit(): void {
 
 getPosts(): void{
   this.loading=true;
-this.authService.getPosts().subscribe ({
+this.postService.getPostsForList(this.page, this.limit).subscribe ({
 next: (data: any)=>{
-  this.posts=data;
-  this.totalElements=data.length
-  this.loading=false
+  this.posts=data.rows;
+  this.totalElements=data.count;
+  this.loading=false;
 },
 error: (err)=>{
   console.error('error fetching posts',err);
@@ -48,6 +48,7 @@ error: (err)=>{
 
 onLimitChange(): void{
   this.page=0;
+  this.getPosts();
 }
 
 setPage(pageInfo: any) {
