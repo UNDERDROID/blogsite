@@ -34,6 +34,10 @@ export class NavComponent {
     this.router.navigate(['/user-list']);
   }
 
+  navigateToPostList(): void{
+    this.router.navigate(['/post-list']);
+  }
+
   // Handle logout
   onLogout(): void {
     // Add your logout logic here (e.g., clear tokens, redirect to login)

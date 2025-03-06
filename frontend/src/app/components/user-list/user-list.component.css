@@ -24,3 +24,26 @@ ngx-datatable {
 .delete-button{
   left: 5px;
 }
+.datatable-footer {
+  gap: 8px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+}
+
+.datatable-footer span {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Style just the select control */
+.limit-selector {
+  width: 45px; /* Narrower width for the select itself */
+  font-size: 13px;
+  border: 1px solid #868282;
+}
+
+/* Style the dropdown panel separately */
+::ng-deep .mat-select-panel {
+  min-width: 100px !important; /* Wider dropdown options */
+}

@@ -1,0 +1,19 @@
+.post-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    justify-content: center;
+  }
+  .post-detail-card {
+    width: 100%;
+    margin-top: 80px;
+    overflow: scroll;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 20px;
+  }
+  .post-metadata {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+  

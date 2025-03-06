@@ -1,1 +1,65 @@
 <p>post-list works!</p>
+<div class="app-container">
+    <app-nav />
+    <div class="container">
+          <ngx-datatable
+            class="material bordered"
+            [rows]="posts"
+            [columnMode]="'force'"
+            [headerHeight]="50"
+            [rowHeight]="'auto'"
+            [footerHeight]="50"
+            [loadingIndicator]="loading"
+            [limit]="limit"
+            [count]="totalElements"
+            [offset]="page"
+            (page)="setPage($event)"
+          >
+          <ngx-datatable-column
+          name="ID" 
+          >
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Title" prop="title"/>
+        <ngx-datatable-column name="Operations">
+          <ng-template 
+          ngx-datatable-cell-template
+          let-rowIndex="rowIndex"
+          let-value="value"
+          let-row="row">
+
+          <!-- Edit Button -->
+          <button mat-raised-button color="primary" (click)="navigateToEditPost(row.id)" class="edit-button">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+
+          <!-- Delete Button -->
+          <button mat-raised-button color="warn" (click)="deletePost(row.id)" class="delete-button">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+          
+        </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-footer>
+          <ng-template
+          ngx-datatable-footer-template
+          let-rowCount="rowCount"
+          let-pageSize="pageSize"
+          let-selectedCount="selectedCount"
+          let-curPage="curPage"
+          let-offset="offset"
+          >
+          
+        <div class="datatable-footer">
+          <span>Rows per page:</span>
+          <select [(ngModel)]="limit" class="limit-selector" (change)="onLimitChange()">
+            <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+          </select>
+        </div>
+      </ng-template>
+    </ngx-datatable-footer>
+          </ngx-datatable>
+          
+    </div>
+    </div>

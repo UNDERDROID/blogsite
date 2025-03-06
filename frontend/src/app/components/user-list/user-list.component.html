@@ -1,40 +1,22 @@
+User List works
 <div class="app-container">
 <app-nav />
 <div class="container">
-<ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title class="ion-text-center">Users</ion-card-title> <!-- Center align title -->
-    </ion-card-header>
 
-    <ion-card-content>
       <ngx-datatable
         class="material bordered"
-        [rows]="users"
-        
+        [rows]="displayedUsers"
         [columnMode]="'force'"
         [headerHeight]="50"
         [rowHeight]="'auto'"
         [footerHeight]="50"
         [loadingIndicator]="loading"
-        [limit]="10"
+        [limit]="limit"
         [count]="totalElements"
         [offset]="page"
         (page)="setPage($event)"
       >
-      <ngx-datatable-column
-      name="ID" 
-      >
-    <!-- <ng-template
-    ngx-datatable-cell-template
-    let-rowIndex="rowIndex"
-    let-value="value"
-    let-row="row"
-    >
-      {{value}}
-      <button>Click Me</button>
-    </ng-template> -->
-    </ngx-datatable-column>
+    <ngx-datatable-column name="ID" prop="id" />
     <ngx-datatable-column name="Username" prop="username"/>
     <ngx-datatable-column name="Email" prop="email" />
     <ngx-datatable-column name="Role" prop="role" />
@@ -58,9 +40,64 @@
       
     </ng-template>
     </ngx-datatable-column>
+    <ngx-datatable-footer>
+      <ng-template
+      ngx-datatable-footer-template
+      let-rowCount="rowCount"
+      let-pageSize="pageSize"
+      let-selectedCount="selectedCount"
+      let-curPage="curPage"
+      let-offset="offset"
+      >
+      
+      <!-- Total Count Indicator -->
+      <div style="padding: 5px 10px 5px 25px;">
+        <div>
+          {{ totalElements }} Total
+        </div>
+      </div>
+
+      <!-- Datatable pager component -->
+    <datatable-pager 
+    [pagerLeftArrowIcon]="'datatable-icon-left'" 
+    [pagerRightArrowIcon]="'datatable-icon-right'"
+    [pagerPreviousIcon]="'datatable-icon-prev'" 
+    [pagerNextIcon]="'datatable-icon-skip'" 
+    [page]="page"
+    [size]="limit" 
+    [count]="totalElements" 
+    [hidden]="false" 
+    (change)="setPage($event)"
+    >
+  </datatable-pager>
+
+    <!-- Current page info -->
+    <div class="paging-info">
+      <div *ngIf="page+1 == 1">
+        {{ page+1 }} - {{ (page+1) * limit > totalElements ? totalElements : (page+1) * limit }}
+      </div>
+      <div *ngIf="page+1 != 1">
+        {{ (page * limit) + 1 }} - {{ (page+1) * limit > totalElements ? totalElements : (page+1) * limit }}
+      </div>
+    </div>
+
+
+      <!-- Page size selector -->
+    <div class="page-limit-container">
+      <select [(ngModel)]="limit" (change)="onLimitChange()" class="page-limit">
+        <option *ngFor="let size of pageSizes" [value]="size"
+          [selected]="size == limit">
+          {{size}}
+        </option>
+      </select>
+    </div>
+
+
+  </ng-template>
+</ngx-datatable-footer>
       </ngx-datatable>
-    </ion-card-content>
-  </ion-card>
-</ion-content>
+      
+
+  
 </div>
 </div>

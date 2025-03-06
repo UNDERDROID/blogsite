@@ -73,7 +73,6 @@ const getPostsPrioritized = async (userId) => {
       SELECT 
         p.id,
         p.title,
-        p.content,
         p.created_by,
         p.created_at,
         u.username AS creator_name,
@@ -104,7 +103,6 @@ const getPostsPrioritized = async (userId) => {
 
 
 
-// Get a post by id along with its categories
 const getPostById = async (id) => {
   const postQuery = `
     SELECT 
@@ -113,30 +111,38 @@ const getPostById = async (id) => {
       p.content, 
       p.created_by, 
       p.created_at,
-      u.username AS creatorName
+      u.username AS creator_name,
+      ARRAY_AGG(DISTINCT c.name) AS categories,
+      ARRAY_AGG(DISTINCT t.name) AS tags
     FROM posts p
+    LEFT JOIN post_categories pc ON p.id = pc.post_id
+    LEFT JOIN categories c ON pc.category_id = c.id
+    LEFT JOIN post_tags pt ON p.id = pt.post_id
+    LEFT JOIN tags t ON pt.tag_id = t.id
     LEFT JOIN users u ON p.created_by = u.id
     WHERE p.id = $1
+    GROUP BY p.id, u.username
   `;
+  
   const postResult = await pool.query(postQuery, [id]);
   const post = postResult.rows[0];
 
+  // Filter out null values from the arrays
   if (post) {
-    const catQuery = `
-      SELECT c.id, c.name
-      FROM categories c
-      JOIN post_categories pc ON c.id = pc.category_id
-      WHERE pc.post_id = $1
-    `;
-    const catResult = await pool.query(catQuery, [id]);
-    post.categories = catResult.rows;
+    post.categories = post.categories ? 
+      post.categories.filter(cat => cat !== null) : 
+      [];
+    
+    post.tags = post.tags ? 
+      post.tags.filter(tag => tag !== null) : 
+      [];
   }
 
   return post;
 };
 
 // Update a post and its categories
-const updatePost = async (id, title, content, categoryIds) => {
+const updatePost = async (id, title, content, categoryIds, tagIds) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -151,6 +157,9 @@ const updatePost = async (id, title, content, categoryIds) => {
     // Remove existing category associations
     await client.query('DELETE FROM post_categories WHERE post_id = $1', [id]);
 
+    //Remove existing tag associations
+    await client.query('DELETE FROM post_tags WHERE post_id = $1', [id]);
+
     // Insert new category associations
     const insertPromises = categoryIds.map((categoryId) =>
       client.query(
@@ -158,6 +167,14 @@ const updatePost = async (id, title, content, categoryIds) => {
         [id, categoryId]
       )
     );
+
+    
+      //Insert new tag associations
+      const insertTags = tagIds.map((tagId)=>
+       client.query(
+        'INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2)', [id, tagId]
+       ) 
+      )
     await Promise.all(insertPromises);
 
     await client.query('COMMIT');
@@ -171,7 +188,22 @@ const updatePost = async (id, title, content, categoryIds) => {
 };
 
 const deletePost = async (id) => {
-  await pool.query('DELETE FROM posts WHERE id = $1', [id]);
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    await client.query('DELETE FROM post_categories WHERE post_id = $1', [id]);
+    await client.query('DELETE FROM post_tags WHERE post_id = $1', [id]);
+    await client.query('DELETE FROM posts WHERE id = $1', [id]);
+    
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  } finally {
+    client.release();
+  }
 };
 
 module.exports = {

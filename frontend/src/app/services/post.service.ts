@@ -17,7 +17,9 @@ export interface PostData {
 export class PostService {
   private apiUrl = 'http://localhost:5000/api/posts';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const authToken = localStorage.getItem('authToken');
+  }
   
   createPost(postData: PostData): Observable<any> {
     const authToken = localStorage.getItem('authToken');
@@ -32,8 +34,8 @@ export class PostService {
     });
     
 
-    // Log the exact data we're sending to help debug
-    console.log('Sending post data:', JSON.stringify(postData));
+    // // Log the exact data we're sending to help debug
+    // console.log('Sending post data:', JSON.stringify(postData));
     
     return this.http.post(this.apiUrl, postData, { headers });
     catchError(error => {
@@ -45,4 +47,14 @@ export class PostService {
       return throwError(() => error);
     })
   }
+
+  deletePost(postId: number): Observable<any>{
+    const token = localStorage.getItem('authToken')
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    }) 
+
+    return this.http.delete(`${this.apiUrl}/${postId}`, { headers });
+  }
+
 }

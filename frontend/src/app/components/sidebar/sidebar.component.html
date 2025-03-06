@@ -1,6 +1,12 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav mode="side" opened class="sidenav">
-      <mat-toolbar color="primary">Categories & Tags</mat-toolbar>
+    <mat-sidenav #sidenav mode="side" [(opened)]="isExpanded" [mode]="isMobile? 'over': 'side'" class="sidenav">
+      <mat-toolbar color="primary">
+        Categories & Tags
+        <span class="spacer"></span>
+      <button mat-icon-button (click)="sidenav.close()" *ngIf="isMobile">
+        <mat-icon>close</mat-icon>
+      </button>
+      </mat-toolbar>
   
       <mat-list>
         <h3>Categories</h3>

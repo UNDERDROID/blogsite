@@ -49,7 +49,12 @@ const getPostsbyTags = async(req, res) => {
     const tagIds = tags.split(',').map(id => parseInt(id.trim()));
 
     const result=await pool.query(
-      `SELECT DISTINCT p.*,
+      `SELECT DISTINCT p.id,
+      p.id,
+      p.title,
+      p.created_at,
+      p.created_by,
+      u.username as creator_name,
       ARRAY_AGG(DISTINCT c.name) AS categories,
       ARRAY_AGG(DISTINCT t.name) AS tags
       FROM posts p
@@ -57,8 +62,9 @@ const getPostsbyTags = async(req, res) => {
       JOIN tags t ON pt.tag_id = t.id
       LEFT JOIN post_categories pc ON p.id = pc.post_id
       LEFT JOIN categories c ON pc.category_id = c.id
+      LEFT JOIN users u ON p.created_by = u.id
       WHERE pt.tag_id = ANY($1::int[])
-      GROUP BY p.id
+      GROUP BY p.id, p.title, p.created_at, p.created_by, u.username
   `, [tagIds]
 );
     if(result.rows.length === 0){
@@ -88,7 +94,9 @@ const getPostsbyCategories = async(req, res) => {
     }
 
     const result = await pool.query(
-      `SELECT DISTINCT p.*, 
+      `SELECT DISTINCT p.id,
+      p.title,
+      p.created_at, 
       ARRAY_AGG(DISTINCT c.name) AS categories,
       ARRAY_AGG(DISTINCT t.name) AS tags
 FROM posts p
@@ -115,6 +123,19 @@ const predefinedCategories = {
   Music: 4,
   Art: 5
 };
+
+const predefinedTags = {
+  Python: 1,
+  JavaScript: 2,
+  "Mental Health": 3,
+  Fitness: 4,
+  "Video Games": 5,
+  Esports: 6,
+  "Classical Music": 7,
+  "Hip Hop": 8,
+  Painting: 9,
+  Sculpting: 10
+}
 
 const createPost = async (req, res) => {
   const { title, content, categories = [], tags = [] } = req.body;
@@ -158,26 +179,47 @@ const createPost = async (req, res) => {
 
 
 const updatePost = async (req, res) => {
-  const { title, content, categories } = req.body;
+  const { title, content, categories, tags } = req.body;
+  
   try {
     if (!Array.isArray(categories)) {
       return res.status(400).json({ error: 'categories must be an array' });
     }
 
+    if (!Array.isArray(tags)) {
+      return res.status(400).json({ error: 'tags must be an array' });
+    }
+
+    // Validate categories
     const invalidCategories = categories.filter(category => !predefinedCategories.hasOwnProperty(category));
     if (invalidCategories.length > 0) {
       return res.status(400).json({
-        error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${Object.keys(predefinedCategories).join(', ')}`
+        error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${Object.keys(predefinedCategories).join(', ')}`,
       });
     }
 
+    // Validate tags
+    const invalidTags = tags.filter(tag => !predefinedTags.hasOwnProperty(tag));
+    if (invalidTags.length > 0) {
+      return res.status(400).json({
+        error: `Invalid tags: ${invalidTags.join(', ')}. Allowed tags: ${Object.keys(predefinedTags).join(', ')}`,
+      });
+    }
+
+    // Map category and tag IDs
     const categoryIds = categories.map(category => predefinedCategories[category]);
-    const updatedPost = await postModel.updatePost(req.params.id, title, content, categoryIds);
+    const tagIds = tags.map(tag => predefinedTags[tag]);
+
+    // Update the post
+    const updatedPost = await postModel.updatePost(req.params.id, title, content, categoryIds, tagIds);
+    
     res.json(updatedPost);
   } catch (error) {
+    console.error('Error updating post:', error);
     res.status(500).json({ error: 'Failed to update post' });
   }
 };
+
 
 const deletePost = async (req, res) => {
   try {
@@ -185,7 +227,7 @@ const deletePost = async (req, res) => {
     res.status(200).json({success: 'post deleted'}); // No content
 
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete post' });
+    res.status(500).json({ error: 'Failed to delete post', error });
   }
 };
 

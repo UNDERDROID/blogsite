@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SharedModule } from '../../shared.module';
 import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,14 +13,20 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit{
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
   categories:any[]=[];
   tags:any[]=[];
   selectedCategories: number[]=[];
   selectedTags: number[]=[]
+  isMobile = false;
+  isExpanded = true;
+
 constructor(
   private categoryService: CategoryService, 
   private router: Router,
-  private route: ActivatedRoute
+  private route: ActivatedRoute,
+  private breakpointObserver: BreakpointObserver
 ){}
 
 ngOnInit(): void {
@@ -30,13 +38,19 @@ ngOnInit(): void {
       this.selectedCategories = params['categoryId']?params['categoryId'].split(',').map(Number): []
       this.selectedTags = params['tagId']?params['tagId'].split(',').map(Number): []
   })
+
+   // Detect screen size changes
+   this.breakpointObserver.observe([Breakpoints.Handset])
+   .subscribe(result => {
+     this.isMobile = result.matches;
+     this.isExpanded = !this.isMobile; // Close sidebar on mobile
+   });
 }
 
 fetchCategories(){
   this.categoryService.getCategories().subscribe(
     data=>{
-    this.categories=data
-    console.log('categories:',data);
+    this.categories=data;
   },
   error=>{
     console.error('Error fetching categories', error);
@@ -45,8 +59,7 @@ fetchCategories(){
 
 fetchTags(){
   this.categoryService.getTags().subscribe(data=>{
-    this.tags=data
-    console.log('tags:',data);
+    this.tags=data;
   },error=>{
     console.error('Error fetching tags', error);
   });
@@ -87,6 +100,15 @@ updateQueryParams() {
   });
 }
 
+toggleSideBar(){
+  this.sidenav.toggle();
+}
+
+closeOnMobile(){
+  if(this.isMobile){
+    this.sidenav.close();
+  }
+}
 getPostsByCategory(categoryId: number){
   this.router.navigate(['/fyp'],{queryParams: {categoryId}});
 }
