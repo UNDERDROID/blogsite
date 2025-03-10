@@ -59,12 +59,12 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/users/login`, body, { headers })
   }
 
-  getPosts(): Observable<any[]> {
+  getPosts(limit: number , offset :number): Observable<any[]> {
       const token = localStorage.getItem('authToken') || '';
     const headers = new HttpHeaders({
         Authorization: `Bearer ${token}`,
     });
-    return this.http.get<any[]>(`${this.apiUrl}/posts/fyp`, { headers });
+    return this.http.get<any[]>(`${this.apiUrl}/posts/fyp?limit=${limit}&offset=${offset}`, { headers });
   }
 
   getPostById(postId: number): Observable<any> {

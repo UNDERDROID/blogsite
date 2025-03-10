@@ -13,7 +13,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports: [
     SharedModule,
     NavComponent,
-    SidebarComponent,
     MatCardModule
   ],
   templateUrl: './post-detail.component.html',

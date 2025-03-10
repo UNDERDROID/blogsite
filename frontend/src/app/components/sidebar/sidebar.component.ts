@@ -1,19 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { SharedModule } from '../../shared.module';
 import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
 
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit{
   @ViewChild('sidenav') sidenav!: MatSidenav;
+
 
   categories:any[]=[];
   tags:any[]=[];
@@ -22,12 +25,15 @@ export class SidebarComponent implements OnInit{
   isMobile = false;
   isExpanded = true;
 
+
 constructor(
   private categoryService: CategoryService, 
   private router: Router,
   private route: ActivatedRoute,
-  private breakpointObserver: BreakpointObserver
+  private breakpointObserver: BreakpointObserver,
 ){}
+
+
 
 ngOnInit(): void {
   this.fetchCategories()

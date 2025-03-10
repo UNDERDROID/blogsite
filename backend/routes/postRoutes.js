@@ -28,9 +28,4 @@ router.get('/by-size',postController.getPostsForList);
 
 router.get('/:id', postController.getPostById);
 
-
-
-//create new category
-router.post('')
-
 module.exports = router;

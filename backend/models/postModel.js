@@ -102,7 +102,7 @@ const getPostsForList = async (page =1, pageSize=10) =>{
 
 
 
-const getPostsPrioritized = async (userId) => {
+const getPostsPrioritized = async (userId, limit, offset) => {
   const query = `
     WITH user_followed AS (
       SELECT category
@@ -134,10 +134,12 @@ const getPostsPrioritized = async (userId) => {
         WHERE uf.category = ANY(pd.categories)
       ) AS priority
     FROM post_data pd
-    ORDER BY priority DESC, pd.created_at DESC;
+    ORDER BY priority DESC, pd.created_at DESC
+    LIMIT $2 OFFSET $3
+    ;
   `;
 
-  const result = await pool.query(query, [userId]);
+  const result = await pool.query(query, [userId, limit, offset]);
   return result.rows;
 };
 

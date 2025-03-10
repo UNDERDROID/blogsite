@@ -8,7 +8,7 @@
             [columnMode]="'force'"
             [headerHeight]="50"
             [rowHeight]="'auto'"
-            [footerHeight]="50"
+            [footerHeight]="100"
             [loadingIndicator]="loading"
             [limit]="limit"
             [count]="totalElements"
@@ -52,10 +52,42 @@
           >
           
         <div class="datatable-footer">
+
+           <!-- Total Count Indicator -->
+      <div style="padding: 5px 10px 5px 25px;">
+        <div>
+          {{ totalElements }} Total
+        </div>
+      </div>
+
           <span>Rows per page:</span>
           <select [(ngModel)]="limit" class="limit-selector" (change)="onLimitChange()">
             <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
           </select>
+
+        <div class="pagination">
+          <button mat-icon-button (click)="prevPage()" [disabled]="page<=1">
+            <mat-icon>arrow_left</mat-icon>          
+          </button>
+
+          <span>Page {{page}} of {{totalPages()}}</span>
+
+          <button mat-icon-button (click)="nextPage()" [disabled]="page >= totalPages()">
+            <mat-icon>arrow_right</mat-icon>
+          </button>
+        </div>
+        
+          <!-- <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="page-1"
+            [size]="limit"
+            [count]="totalElements"
+            (click)="setPage($event)"
+            >
+          </datatable-pager> -->
         </div>
       </ng-template>
     </ngx-datatable-footer>

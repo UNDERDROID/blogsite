@@ -15,8 +15,9 @@
         (click)="toggleCategory(category.id)"
         [class.selected]="selectedCategories.includes(category.id)"
         >
+        <div class="cat-name">
         <mat-icon>{{ selectedCategories.includes(category.id) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
-        {{ category.name }}
+        {{ category.name }} </div>
         </mat-list-item>
       </mat-list>
   
@@ -26,8 +27,10 @@
         (click)="toggleTag(tag.id)"
         [class.selected]="selectedTags.includes(tag.id)"
         >
+        <div class="tag-name">
         <mat-icon>{{ selectedTags.includes(tag.id) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
-{{ tag.name }}
+          {{ tag.name }}
+        </div>
         </mat-list-item>
       </mat-list>
     </mat-sidenav>

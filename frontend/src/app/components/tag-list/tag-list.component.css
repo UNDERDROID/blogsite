@@ -1,0 +1,5 @@
+.tagForm{
+    column-gap: 5px;
+    row-gap: 10px;
+    justify-content: space-between;
+}

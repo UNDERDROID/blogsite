@@ -32,14 +32,16 @@
         <p><strong>Category:</strong> {{ post.categories }}</p>
         <p><strong>Tags:</strong> {{ post.tags }}</p>
       </mat-card-content>
-
-      <!-- <mat-card-content>
-        <p [innerHTML]="post.safeContent"></p>
-        <p><strong>Category:</strong> {{ post.categories }}</p>
-        <p><strong>Tags:</strong> {{ post.tags }}</p>
-      </mat-card-content> -->
     </mat-card>
   </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+    <p>Loading more posts...</p>
+  </div>
+  
 </div>
 </div>
 </div>

@@ -14,7 +14,11 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
+  imports: [
+    MatDialogModule
+  ],
   exports: [
     CommonModule,
     MatCardModule,
@@ -31,7 +35,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     MatSelectModule,
     FormsModule,
     NgxDatatableModule,
-    
+    MatDialogModule
+ 
   ],
 })
 export class SharedModule {}

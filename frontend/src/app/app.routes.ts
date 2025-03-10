@@ -9,6 +9,8 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { PostDetailComponent } from './components/post-detail/post-detail.component';
 import { EditPostComponent } from './components/edit-post/edit-post.component';
+import { CatListComponent } from './components/cat-list/cat-list.component';
+import { TagListComponent } from './components/tag-list/tag-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -20,5 +22,7 @@ export const routes: Routes = [
     {path: 'post-list', component: PostListComponent, canActivate: [adminGuard]},
     {path: 'post/:id', component: PostDetailComponent},
     {path: 'edit-post/:id', component: EditPostComponent},
+    {path: 'cat-list', component: CatListComponent},
+    {path: 'tag-list', component: TagListComponent},
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
