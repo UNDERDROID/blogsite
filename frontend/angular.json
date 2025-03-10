@@ -28,7 +28,6 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/summernote/dist/summernote-bs4.css",
-
               "src/styles.css"
             ],
             "scripts": [

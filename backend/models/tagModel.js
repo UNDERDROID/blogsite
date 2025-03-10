@@ -8,6 +8,22 @@ const result = await pool.query(
 return result.rows[0];
 }
 
+const deleteTag = async (tagId) =>{
+  const result = await pool.query(
+    'DELETE FROM tags WHERE id = $1 RETURNING *;', [tagId]
+  )
+  return result.rows[0];
+}
+
+const updateTag = async (tagId, name, categoryId)=>{
+  const result = await pool.query(
+    'UPDATE tags SET name=$1, category_id=$2 WHERE id = $3 RETURNING *', [name, categoryId, tagId]
+  );
+  return result.rows[0];
+}
+
+
+
 const getCategoriesByTags = async (tags) => {
     if (tags.length === 0) return [];
   
@@ -29,6 +45,8 @@ const getCategoriesByTags = async (tags) => {
 
 module.exports = {
     createTag,
+    deleteTag,
+    updateTag,
     getCategoriesByTags,
     getAllTags
 }

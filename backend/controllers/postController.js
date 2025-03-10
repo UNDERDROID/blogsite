@@ -16,7 +16,9 @@ const getAllPosts = async (req, res) => {
 const getPostsPrioritized = async (req, res) => {
   try{                  
     const userId = req.user.id;
-    const posts = await postModel.getPostsPrioritized(userId);
+    const limit = parseInt(req.query.limit);
+    const offset = parseInt(req.query.offset);
+    const posts = await postModel.getPostsPrioritized(userId, limit, offset);
     res.status(200).json(posts);
   }catch(error){
     console.error('Error fetching posts:', error);
@@ -56,6 +58,8 @@ const getPostById = async (req, res) => {
 //Get posts by tags
 const getPostsbyTags = async(req, res) => {
   const { tags } = req.query;
+  const limit = parseInt(req.query.limit);
+  const offset = parseInt(req.query.offset);
 
   try{
     if(!tags){
@@ -81,7 +85,8 @@ const getPostsbyTags = async(req, res) => {
       LEFT JOIN users u ON p.created_by = u.id
       WHERE pt.tag_id = ANY($1::int[])
       GROUP BY p.id, p.title, p.created_at, p.created_by, u.username
-  `, [tagIds]
+      LIMIT $2 OFFSET $3;
+  `, [tagIds, limit, offset]
 );
     if(result.rows.length === 0){
       return res.status(404).json({message: "No posts found for this tag"});
@@ -96,6 +101,8 @@ const getPostsbyTags = async(req, res) => {
 //Get posts by categories
 const getPostsbyCategories = async(req, res) => {
   const { categories } = req.query;
+  const limit = parseInt(req.query.limit);
+  const offset = parseInt(req.query.offset);
   
   try{
 
@@ -121,7 +128,9 @@ LEFT JOIN categories c ON pc.category_id = c.id
 LEFT JOIN post_tags pt ON p.id = pt.post_id
 LEFT JOIN tags t ON pt.tag_id = t.id
 WHERE pc.category_id = ANY($1::int[])
-GROUP BY p.id`, [categoryIds]
+GROUP BY p.id 
+LIMIT $2 OFFSET $3
+`, [categoryIds, limit, offset]
     );
     if(result.rows.length === 0){
       return res.status(404).json({message: 'No posts found for this category'});
@@ -206,21 +215,21 @@ const updatePost = async (req, res) => {
       return res.status(400).json({ error: 'tags must be an array' });
     }
 
-    // Validate categories
-    const invalidCategories = categories.filter(category => !predefinedCategories.hasOwnProperty(category));
-    if (invalidCategories.length > 0) {
-      return res.status(400).json({
-        error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${Object.keys(predefinedCategories).join(', ')}`,
-      });
-    }
+    // // Validate categories
+    // const invalidCategories = categories.filter(category => !predefinedCategories.hasOwnProperty(category));
+    // if (invalidCategories.length > 0) {
+    //   return res.status(400).json({
+    //     error: `Invalid categories: ${invalidCategories.join(', ')}. Allowed categories: ${Object.keys(predefinedCategories).join(', ')}`,
+    //   });
+    // }
 
-    // Validate tags
-    const invalidTags = tags.filter(tag => !predefinedTags.hasOwnProperty(tag));
-    if (invalidTags.length > 0) {
-      return res.status(400).json({
-        error: `Invalid tags: ${invalidTags.join(', ')}. Allowed tags: ${Object.keys(predefinedTags).join(', ')}`,
-      });
-    }
+    // // Validate tags
+    // const invalidTags = tags.filter(tag => !predefinedTags.hasOwnProperty(tag));
+    // if (invalidTags.length > 0) {
+    //   return res.status(400).json({
+    //     error: `Invalid tags: ${invalidTags.join(', ')}. Allowed tags: ${Object.keys(predefinedTags).join(', ')}`,
+    //   });
+    // }
 
     // Map category and tag IDs
     const categoryIds = categories.map(category => predefinedCategories[category]);

@@ -5,3 +5,17 @@
 .delete-button{
     left: 5px;
 }
+.datatable-footer {
+    gap: 8px;
+    padding: 6px 8px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .pagination{
+    justify-content: center;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+  }

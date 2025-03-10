@@ -6,12 +6,13 @@ import { NavComponent } from '../nav/nav.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
   imports: [
-    SharedModule, IonicModule, NavComponent, NgxDatatableModule
+    SharedModule, MatButtonModule, NavComponent, NgxDatatableModule
     
   ],
   templateUrl: './post-list.component.html',
@@ -47,14 +48,35 @@ error: (err)=>{
 }
 
 onLimitChange(): void{
-  this.page=0;
+  this.page=1;
   this.getPosts();
 }
 
 setPage(pageInfo: any) {
-  this.page = pageInfo.offset;
-  this.getPosts();
+  if (pageInfo.offset + 1 !== this.page) {
+    this.page = pageInfo.offset + 1; // Increment or decrement page based on ngx-datatable offset
+    this.getPosts(); // Fetch new posts
+  }
 }
+
+prevPage() {
+  if (this.page > 1) {
+    this.page--;
+    this.getPosts();
+  }
+}
+
+nextPage() {
+  if (this.page < this.totalPages()) {
+    this.page++;
+    this.getPosts();
+  }
+}
+
+totalPages(): number {
+  return Math.ceil(this.totalElements / this.limit); // Calculate total pages
+}
+
 
 navigateToEditPost(postId: number){
   this.router.navigate([`/edit-post/${postId}`])

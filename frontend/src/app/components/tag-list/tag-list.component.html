@@ -1,0 +1,61 @@
+<p>tag-list works!</p>
+<button mat-raised-button (click)="openAddTagDialog()">Add tag</button>
+<ngx-datatable
+class="material bordered"
+[rows]="tags"
+[rowHeight]="'auto'"
+[columnMode]="'force'"
+>
+<ngx-datatable-column name="id" />
+
+<ngx-datatable-column name="name" />
+
+<ngx-datatable-column name="category_name" prop="category_name" />
+
+<ngx-datatable-column name="Operations">
+    <ng-template
+    ngx-datatable-cell-template
+    let-rowIndex="rowIndex"
+    let-value="value"
+    let-row="row">
+      <!-- Edit Button -->
+      <button mat-raised-button color="primary"  class="edit-button" (click)="openEditTagDialog(row)">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+
+      <!-- Delete Button -->
+      <button mat-raised-button color="warn" (click)="deleteTag(row.id)" class="delete-button">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </ng-template>
+</ngx-datatable-column>
+</ngx-datatable>
+
+<!-- Add/Update Tag Dialog -->
+<ng-template #addTagDialog>
+    <h2 mat-dialog-title *ngIf="!editMode">Add Tag</h2>
+    <h2 mat-dialog-title *ngIf="editMode">Update Tag</h2>
+    <mat-dialog-content>
+      <mat-form-field appearance="fill">
+        <mat-label>Tag Name</mat-label>
+        <input matInput [(ngModel)]="tagName"/>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategoryId">
+          <mat-option *ngFor="let category of categories" [value]="category.id">
+            {{category.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="submitTag()">
+        {{editMode? 'Update': 'Add'}}
+      </button>
+    </mat-dialog-actions>
+  </ng-template>

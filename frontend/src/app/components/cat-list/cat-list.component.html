@@ -1,0 +1,49 @@
+<p>cat-list works!</p>
+<button mat-raised-button (click)="openAddCategoryDialog()">Add category</button>
+<ngx-datatable
+class="material bordered"
+[rows]="categories"
+[rowHeight]="'auto'"
+[columnMode]="'force'"
+>
+<ngx-datatable-column name="Id" prop="id"></ngx-datatable-column>
+<ngx-datatable-column name="Name" prop="name"></ngx-datatable-column>
+<ngx-datatable-column name="Operations">
+    <ng-template
+    ngx-datatable-cell-template
+    let-rowIndex="rowIndex"
+    let-value="value"
+    let-row="row">
+      <!-- Edit Button -->
+      <button mat-raised-button color="primary" (click)="openEditCategoryDialog(row)"  class="edit-button">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+
+      <!-- Delete Button -->
+      <button mat-raised-button color="warn" (click)="deleteCategory(row.id)" class="delete-button">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </ng-template>
+</ngx-datatable-column>
+</ngx-datatable>
+
+<!-- Add Category Dialog -->
+<ng-template #addCategoryDialog>
+    <h2 mat-dialog-title *ngIf="!editMode">Add Category</h2>
+    <h2 mat-dialog-title *ngIf="editMode">Update Category</h2>
+    <mat-dialog-content>
+      <mat-form-field appearance="fill">
+        <mat-label>Category Name</mat-label>
+        <input matInput [(ngModel)]="categoryName"/>
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="submitCategory()">
+        {{editMode? 'Update': 'Add'}}
+      </button>
+    </mat-dialog-actions>
+  </ng-template>
+  
