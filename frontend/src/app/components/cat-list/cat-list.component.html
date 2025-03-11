@@ -1,5 +1,7 @@
-<p>cat-list works!</p>
-<button mat-raised-button (click)="openAddCategoryDialog()">Add category</button>
+<div class="nav">
+<app-nav />
+</div>
+<button mat-raised-button color="primary" (click)="openAddCategoryDialog()" class="add-cat"><mat-icon>add</mat-icon>Add category</button>
 <ngx-datatable
 class="material bordered"
 [rows]="categories"
@@ -40,10 +42,10 @@ class="material bordered"
       </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="closeDialog()">Cancel</button>
-      <button mat-button color="primary" (click)="submitCategory()">
+      <button mat-raised-button color="primary" (click)="submitCategory()">
         {{editMode? 'Update': 'Add'}}
       </button>
+      <button mat-raised-button color="warn" (click)="closeDialog()">Cancel</button>
     </mat-dialog-actions>
   </ng-template>
   

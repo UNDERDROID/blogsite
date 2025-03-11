@@ -3,12 +3,13 @@ import { SharedModule } from '../../shared.module';
 import { CategoryService, categoryData } from '../../services/category.service';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NavComponent } from "../nav/nav.component";
 
 
 @Component({
   selector: 'app-cat-list',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, NavComponent],
   templateUrl: './cat-list.component.html',
   styleUrl: './cat-list.component.css'
 })

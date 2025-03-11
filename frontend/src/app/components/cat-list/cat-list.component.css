@@ -1,0 +1,18 @@
+.delete-button{
+    margin-left: 5px;
+}
+.add-cat{
+    padding: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+.nav{
+    margin-bottom: 70px;
+}
+mat-form-field {
+    display: inline-flex;
+    align-items: baseline;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 300px;
+}

@@ -3,11 +3,12 @@ import { SharedModule } from '../../shared.module';
 import { CategoryService, tagData } from '../../services/category.service';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { NavComponent } from "../nav/nav.component";
 
 @Component({
   selector: 'app-tag-list',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, NavComponent],
   templateUrl: './tag-list.component.html',
   styleUrl: './tag-list.component.css'
 })
@@ -95,7 +96,7 @@ openAddTagDialog(){
   this.editMode = false;
   this.tagName='';
   this.dialogRef = this.dialog.open(this.addTagDialog, {
-    width: '600px'
+    width: '400px'
   });
 }
 
@@ -105,7 +106,7 @@ openEditTagDialog(tag: any){
   this.tagName = tag.name;
   this.selectedCategoryId = tag.category_id;
   this.dialogRef = this.dialog.open(this.addTagDialog, {
-    width: '600px'
+    width: '400px'
   })
 }
 

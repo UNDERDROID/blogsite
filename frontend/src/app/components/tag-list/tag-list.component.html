@@ -1,5 +1,9 @@
-<p>tag-list works!</p>
-<button mat-raised-button (click)="openAddTagDialog()">Add tag</button>
+<div class="nav-bar">
+<app-nav />
+</div>
+<button mat-raised-button color="primary" (click)="openAddTagDialog()" class="add-tag">Add New Tag
+  <mat-icon>add</mat-icon>
+</button>
 <ngx-datatable
 class="material bordered"
 [rows]="tags"
@@ -53,9 +57,10 @@ class="material bordered"
       </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="closeDialog()">Cancel</button>
-      <button mat-button color="primary" (click)="submitTag()">
+      <button mat-raised-button color="primary" (click)="submitTag()">
         {{editMode? 'Update': 'Add'}}
       </button>
+      <button mat-raised-button color="warn" (click)="closeDialog()">Cancel</button>
+
     </mat-dialog-actions>
   </ng-template>

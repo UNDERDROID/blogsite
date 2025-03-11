@@ -1,5 +1,25 @@
-.tagForm{
-    column-gap: 5px;
-    row-gap: 10px;
-    justify-content: space-between;
+.delete-button{
+    margin-left: 5px;
+}
+input.mat-input-element {
+    font-size: 16px;
+    min-width: 100px;
+    color: rgba(0, 0, 0, 0.87); /* Dark color for the input text */
+  }
+  mat-form-field {
+    display: inline-flex;
+    align-items: baseline;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 300px;
+}
+
+.add-tag{
+    margin-top: ;
+    margin-bottom: 10px;
+    padding: 5px;
+    margin-left: 5px;
+}
+.nav-bar{
+    margin-bottom: 70px;
 }
